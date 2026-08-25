@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ka">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>martivad.app — ბუღალტრული აღრიცხვა</title>
+<meta name="description" content="ბუღალტრული აღრიცხვის დემო აპლიკაცია: გატარებები, საბანკო ამონაწერისა და rs.ge-ს რეპორტის ავტომატური ატვირთვა, ბრუნვითი უწყისი.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;500;600;700&family=Noto+Serif+Georgian:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<header>
+  <div class="hd">
+    <a class="logo" href="https://www.martivad.app" target="_blank" rel="noopener" title="martivad.app">
+      <svg viewBox="0 0 26 26" width="26" height="26" aria-hidden="true">
+        <rect x="1" y="1" width="24" height="24" rx="5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M7 18V9.5l6 5.5 6-5.5V18" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="wm">martivad<span class="tld">.app</span></span>
+    </a>
+    <div class="orgbox" id="orgbox"></div>
+  </div>
+</header>
+
+<nav class="tabs"><div class="in" id="tabs" role="tablist"></div></nav>
+
+<div class="wrap"><div id="view"></div>
+
+  <div class="brandbar">
+    <p>ეს აპლიკაცია <b>martivad.app</b>-ის პროდუქტია. მონაცემები მხოლოდ თქვენს ბრაუზერში ინახება და არსად არ იგზავნება.
+      სრულყოფილი ბუღალტრული ოპერაციების საწარმოებლად მიაკითხეთ
+      <a href="https://www.martivad.app" target="_blank" rel="noopener">www.martivad.app</a>-ს.</p>
+  </div>
+</div>
+
+<script type="module" src="assets/app.js"></script>
+</body>
+</html>
