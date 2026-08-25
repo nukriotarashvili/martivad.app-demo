@@ -3,7 +3,7 @@
 ბუღალტრული აღრიცხვის დემო აპლიკაცია ქართული ბიზნესისთვის. მუშაობს მთლიანად
 ბრაუზერში: სერვერი, ბაზა და რეგისტრაცია არ სჭირდება, მონაცემები არსად არ იგზავნება.
 
-**დემო:** https://nukriotarashvili.github.io/martivad.app-demo/
+**დემო:** https://martivad-app-demo.vercel.app/
 
 ---
 
@@ -58,11 +58,35 @@ python3 -m http.server 8000
 ES module-ების გამო `index.html`-ის პირდაპირ ფაილიდან გახსნა (`file://`) არ მუშაობს —
 საჭიროა ლოკალური სერვერი.
 
-### ჰოსტინგი
+### ჰოსტინგი — Vercel
 
-`main` ბრენჩში ატვირთვისთანავე GitHub Actions აქვეყნებს GitHub Pages-ზე
-(იხ. `.github/workflows/pages.yml`). სხვა სტატიკურ ჰოსტინგზეც (Netlify, Vercel,
-Cloudflare Pages) უბრალოდ საქაღალდის ატვირთვა კმარა.
+პროექტს build არ სჭირდება, ამიტომ Vercel-ზე ატანა ორ ნაბიჯშია:
+
+1. [vercel.com/new](https://vercel.com/new) → **Import Git Repository** → ეს რეპოზიტორია.
+2. Framework Preset: **Other**. Build Command და Output Directory ცარიელი დატოვეთ —
+   `vercel.json` თავად აწესებს ყველაფერს.
+
+ამის შემდეგ `main`-ში ყოველი push ავტომატურად ქვეყნდება, pull request კი
+თავის preview-ბმულს იღებს.
+
+CLI-ით:
+
+```bash
+npm i -g vercel
+vercel          # preview
+vercel --prod   # production
+```
+
+**`vercel.json`** აწესებს: `cleanUrls`, უსაფრთხოების სათაურები და
+Content-Security-Policy (`script-src 'self'`, შრიფტები მხოლოდ Google Fonts-იდან,
+გარე კავშირები დაბლოკილია), ასევე `must-revalidate` — რომ განახლება მაშინვე
+გამოჩნდეს ქეშის გასუფთავების გარეშე.
+
+<details><summary>GitHub Pages ალტერნატივად</summary>
+
+`.github/workflows/pages.yml` შენარჩუნებულია, მაგრამ ხელით ეშვება. საჭიროებისას:
+Settings → Pages → Source: **GitHub Actions**, შემდეგ Actions → *Deploy to GitHub Pages* → **Run workflow**.
+</details>
 
 ## შეზღუდვები
 

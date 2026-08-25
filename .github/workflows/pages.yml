@@ -1,8 +1,9 @@
 name: Deploy to GitHub Pages
 
+# ჰოსტინგი Vercel-ზეა. ეს workflow ხელით ეშვება — თუ GitHub Pages დაგჭირდათ,
+# გაუშვით Actions → Deploy to GitHub Pages → Run workflow
+# (წინასწარ: Settings → Pages → Source: GitHub Actions).
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
