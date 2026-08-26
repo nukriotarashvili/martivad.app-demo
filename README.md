@@ -95,6 +95,11 @@ Content-Security-Policy (`script-src 'self'`, შრიფტები მხო
 Settings → Pages → Source: **GitHub Actions**, შემდეგ Actions → *Deploy to GitHub Pages* → **Run workflow**.
 </details>
 
+## განვითარების ისტორია
+
+როგორ აშენდა თემა, i18n, კურსები, იმპორტის პანელი და რესპონსიულობა — და რა
+დეფექტი დაიჭირა თითოეულმა შემოწმებამ: [docs/PHASES.md](docs/PHASES.md).
+
 ## შეზღუდვები
 
 დემო ვერსიაა: მონაცემები ბრაუზერის localStorage-შია, ანუ მოწყობილობაზეა მიბმული
