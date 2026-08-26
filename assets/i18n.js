@@ -207,7 +207,9 @@ const en = {
   'ტრანსპორტი საბაჟო ღირებულებაში (საზღვრამდე, დეკლარირებული)':
     'Transport in the customs value (to the border, as declared)',
   'დღგ-ს სტატუსი': 'VAT status',
-  'გადამხდელი': 'VAT registered', 'არაგადამხდელი': 'Not VAT registered',
+  // ნიშანში „დღგ-ს სტატუსი:"-ის გვერდით დგას, ამიტომ „VAT" აქ აღარ მეორდება.
+  // ცალკე მდგომი ველი სხვა გასაღებია: 'დღგ-ს გადამხდელი' → 'VAT registered'.
+  'გადამხდელი': 'Registered', 'არაგადამხდელი': 'Not registered',
   'ფასი ვალუტაში': 'Price in currency',
   'ღირებულება ₾': 'Value, GEL',
   'განაწილებული': 'Allocated',
