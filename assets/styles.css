@@ -293,3 +293,11 @@ pre{background:var(--card-2);border:1px solid var(--rule);padding:12px;overflow:
 .theme-toggle:hover{color:var(--ink);background:var(--card-3)}
 .theme-toggle svg{flex:none}
 @media(max-width:560px){.theme-toggle .lbl{display:none}.theme-toggle{padding:5px 8px}}
+
+/* -- Language switch ----------------------------------------------------- */
+.lang-switch{flex:none;display:inline-flex;border:1px solid var(--rule-2);overflow:hidden}
+.lang-switch button{border:0;border-right:1px solid var(--rule-2);background:var(--card-2);
+  color:var(--ink-2);font-size:11.5px;font-weight:600;padding:6px 9px;min-height:34px}
+.lang-switch button:last-child{border-right:0}
+.lang-switch button:hover{color:var(--ink);background:var(--card-3)}
+.lang-switch button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
