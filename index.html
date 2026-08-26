@@ -31,6 +31,7 @@
     try {
       var m = localStorage.getItem("martivad.theme");
       if (m === "light" || m === "dark") document.documentElement.setAttribute("data-theme", m);
+      document.documentElement.dataset.themeGuard = "1";
     } catch (e) { /* storage disabled — the media query still governs */ }
   })();
 </script>
