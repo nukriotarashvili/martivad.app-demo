@@ -77,4 +77,12 @@ export function initThemeToggle(btn) {
   }
 }
 
+/*
+ * The <head> guard applies the stored theme before first paint. It is an inline
+ * script, so a strict `script-src` must carry its hash — and if that hash ever
+ * goes stale the guard silently stops running. Re-applying here means the worst
+ * case is a brief flash, not a preference that is ignored outright.
+ */
+applyTheme(readTheme());
+
 initThemeToggle(document.getElementById('themeToggle'));
