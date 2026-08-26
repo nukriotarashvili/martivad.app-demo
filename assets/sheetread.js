@@ -1,3 +1,4 @@
+// © შპს მარტივადი — Elastic License 2.0 (იხ. LICENSE)
 /* ============================================================================
    sheetread.js — .xlsx და .xls (BIFF8/OLE2) წამკითხველი, გარე ბიბლიოთეკის გარეშე.
    აბრუნებს: {sheets:[{name, rows:[[cell,...]]}]}   cell = string | number | Date | null

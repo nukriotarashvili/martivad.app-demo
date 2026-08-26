@@ -3,41 +3,76 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>martivad.app — ბუღალტრული აღრიცხვა</title>
-<meta name="description" content="ბუღალტრული აღრიცხვის დემო აპლიკაცია: გატარებები, საბანკო ამონაწერისა და rs.ge-ს რეპორტის ავტომატური ატვირთვა, ბრუნვითი უწყისი.">
+<title>საბუღალტრო ბლოკნოტი — martivad.app-ის უფასო ხელსაწყო</title>
+<meta name="description" content="უფასო საბუღალტრო ბლოკნოტი ბრაუზერში: ქართული ანგარიშთა გეგმა, გატარებები, საბანკო ამონაწერისა და rs.ge-ს რეპორტის ატვირთვა, ბრუნვითი უწყისი. მონაცემები მხოლოდ თქვენს მოწყობილობაზე ინახება.">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;500;600;700&family=Noto+Serif+Georgian:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ka_GE">
+<meta property="og:site_name" content="Martivad">
+<meta property="og:title" content="საბუღალტრო ბლოკნოტი — martivad.app-ის უფასო ხელსაწყო">
+<meta property="og:description" content="ქართული ანგარიშთა გეგმა, გატარებები და ბრუნვითი უწყისი პირდაპირ ბრაუზერში. მონაცემები მოწყობილობას არ ტოვებს.">
+<meta property="og:url" content="https://demo.martivad.app/">
+<meta property="og:image" content="https://demo.martivad.app/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+
+<!-- Self-hosted FiraGO — no external font host, so the page keeps working
+     offline and nothing about the visitor leaves the device. -->
+<link rel="preload" href="assets/fonts/firago-regular-georgian.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
 
 <header>
   <div class="hd">
-    <a class="logo" href="https://www.martivad.app" target="_blank" rel="noopener" title="martivad.app">
-      <svg viewBox="0 0 26 26" width="26" height="26" aria-hidden="true">
-        <rect x="1" y="1" width="24" height="24" rx="5" fill="none" stroke="currentColor" stroke-width="1.5"/>
-        <path d="M7 18V9.5l6 5.5 6-5.5V18" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round"/>
+    <a class="logo" href="https://www.martivad.app/?utm_source=demo-app&amp;utm_medium=bridge&amp;utm_content=header"
+       target="_blank" rel="noopener" title="martivad.app">
+      <!-- Martivad brand mark — same geometry as the main app's favicon -->
+      <svg viewBox="0 0 512 512" width="26" height="26" aria-hidden="true">
+        <path fill="none" stroke="currentColor" stroke-width="54" stroke-linecap="butt"
+              d="M112 356 V 258 C112 220 134 204 157 204 C180 204 202 220 202 258 V 356"/>
+        <path fill="currentColor"
+              d="M281.3 356 L 297.1 318.8 L 341.7 415.4 L 441.6 237.2 L 464.2 249.9 L 464 142 L 371.8 198.1 L 394.4 210.8 L 346.3 296.6 L 294.9 185.2 L 222.7 356 Z"/>
       </svg>
-      <span class="wm">martivad<span class="tld">.app</span></span>
+      <span class="wmbox">
+        <span class="wm">საბუღალტრო ბლოკნოტი</span>
+        <span class="sub">martivad.app-ის უფასო ხელსაწყო</span>
+      </span>
     </a>
+    <span class="badge-free">უფასო ხელსაწყო</span>
     <div class="orgbox" id="orgbox"></div>
   </div>
 </header>
 
 <nav class="tabs"><div class="in" id="tabs" role="tablist"></div></nav>
 
-<div class="wrap"><div id="view"></div>
+<div class="wrap">
+  <!-- backup reminders (assets/backup.js) render here -->
+  <div id="banner"></div>
 
-  <div class="brandbar">
-    <p>ეს აპლიკაცია <b>martivad.app</b>-ის პროდუქტია. მონაცემები მხოლოდ თქვენს ბრაუზერში ინახება და არსად არ იგზავნება.
-      სრულყოფილი ბუღალტრული ოპერაციების საწარმოებლად მიაკითხეთ
-      <a href="https://www.martivad.app" target="_blank" rel="noopener">www.martivad.app</a>-ს.</p>
-  </div>
+  <div id="view"></div>
 </div>
+
+<footer class="sitefoot">
+  <div class="in">
+    <div class="bridge">
+      <p class="q">გჭირდებათ POS, მარაგის აღრიცხვა და გუნდური მუშაობა?</p>
+      <p class="a"><a href="https://www.martivad.app/?utm_source=demo-app&amp;utm_medium=bridge&amp;utm_content=footer"
+                      target="_blank" rel="noopener">Martivad.app</a> — სრული სისტემა, ბუღალტერიის ჩათვლით.</p>
+    </div>
+    <p class="legal">
+      © <span class="mono">2026</span> შპს მარტივადი ·
+      <a href="https://github.com/nukriotarashvili/martivad.app-demo/blob/main/LICENSE"
+         target="_blank" rel="noopener">Elastic License 2.0</a> ·
+      <a href="https://www.martivad.app/?utm_source=demo-app&amp;utm_medium=bridge&amp;utm_content=footer-legal"
+         target="_blank" rel="noopener">www.martivad.app</a>
+    </p>
+    <p class="legal muted">მონაცემები ინახება მხოლოდ ამ ბრაუზერში და არსად არ იგზავნება.</p>
+  </div>
+</footer>
 
 <script type="module" src="assets/app.js"></script>
 </body>
