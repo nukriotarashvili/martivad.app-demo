@@ -23,6 +23,17 @@
      offline and nothing about the visitor leaves the device. -->
 <link rel="preload" href="assets/fonts/firago-regular-georgian.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/styles.css">
+
+<!-- Theme before first paint. Unset data-theme = follow prefers-color-scheme,
+     which is what a first-time visitor gets. -->
+<script>
+  (function () {
+    try {
+      var m = localStorage.getItem("martivad.theme");
+      if (m === "light" || m === "dark") document.documentElement.setAttribute("data-theme", m);
+    } catch (e) { /* storage disabled — the media query still governs */ }
+  })();
+</script>
 </head>
 <body>
 
@@ -42,7 +53,8 @@
         <span class="sub">martivad.app-ის უფასო ხელსაწყო</span>
       </span>
     </a>
-    <span class="badge-free">უფასო ხელსაწყო</span>
+    <span class="badge-free" data-i18n="brand.freeTool">უფასო ხელსაწყო</span>
+    <button type="button" id="themeToggle" class="theme-toggle"></button>
     <div class="orgbox" id="orgbox"></div>
   </div>
 </header>
@@ -74,6 +86,7 @@
   </div>
 </footer>
 
+<script type="module" src="assets/theme.js"></script>
 <script type="module" src="assets/app.js"></script>
 </body>
 </html>
