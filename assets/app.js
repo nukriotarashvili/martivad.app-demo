@@ -7,6 +7,7 @@ import SR from './sheetread.js';
 import { store, blankOrg, accMap, addEntry, ensurePartner, ensureItem, trialBalance } from './store.js';
 import { importBank, importSales, closeMonth } from './importers.js';
 import * as backup from './backup.js';
+import { applyI18n, t as tr } from './i18n.js';
 
 /* ---------------------------------------------------------------- helpers */
 const $ = s => document.querySelector(s);
@@ -122,45 +123,46 @@ function vOrg() {
   const orgs = store.all(), org = store.active();
   return `
   <div class="card">
-    <h2>ორგანიზაციები</h2>
-    <p class="note">ერთ ბრაუზერში რამდენიმე ორგანიზაციის წარმოება შეიძლება. მონაცემები ინახება მხოლოდ
+    <h2 data-i18n="ორგანიზაციები">ორგანიზაციები</h2>
+    <p class="note" data-i18n="ერთ ბრაუზერში რამდენიმე ორგანიზაციის წარმოება შეიძლება. მონაცემები ინახება მხოლოდ
+      ამ მოწყობილობაზე — სერვერზე არაფერი იგზავნება. სარეზერვო ასლისთვის გამოიყენეთ ექსპორტი.">ერთ ბრაუზერში რამდენიმე ორგანიზაციის წარმოება შეიძლება. მონაცემები ინახება მხოლოდ
       ამ მოწყობილობაზე — სერვერზე არაფერი იგზავნება. სარეზერვო ასლისთვის გამოიყენეთ ექსპორტი.</p>
     ${orgs.length ? `<div class="tw"><table>
-      <thead><tr><th>დასახელება</th><th>ს/ნ</th><th>დღგ</th><th class="num">გატარება</th><th>შექმნილია</th><th></th></tr></thead>
+      <thead><tr><th data-i18n="დასახელება">დასახელება</th><th data-i18n="ს/ნ">ს/ნ</th><th data-i18n="დღგ">დღგ</th><th class="num" data-i18n="გატარება">გატარება</th><th data-i18n="შექმნილია">შექმნილია</th><th></th></tr></thead>
       <tbody>${orgs.map(o => `<tr>
-        <td><b>${esc(o.name)}</b>${o.id === (org && org.id) ? ' <span class="pill ok">აქტიური</span>' : ''}</td>
+        <td><b>${esc(o.name)}</b>${o.id === (org && org.id) ? ' <span class="pill ok" data-i18n="აქტიური">აქტიური</span>' : ''}</td>
         <td class="mono">${esc(o.tin)}</td>
         <td>${o.settings.vatPayer ? o.settings.vatRate + '%' : '—'}</td>
         <td class="num">${o.entries.length}</td>
         <td class="mono">${dmy(o.created)}</td>
         <td style="text-align:right">
-          ${o.id === (org && org.id) ? '' : `<button class="sm" data-act="pick" data-id="${o.id}">გახსნა</button>`}
+          ${o.id === (org && org.id) ? '' : `<button class="sm" data-act="pick" data-id="${o.id}" data-i18n="გახსნა">გახსნა</button>`}
           <button class="ghost sm" data-act="delorg" data-id="${o.id}">✕</button></td></tr>`).join('')}
       </tbody></table></div>` : `
-    <div class="empty"><h3>ჯერ არცერთი ორგანიზაცია არ არის</h3>
-      <p>დაიწყეთ ახლის შექმნით — ანგარიშთა გეგმა (114 ანგარიში, საქართველოს სტანდარტი) ავტომატურად ჩაიტვირთება.</p></div>`}
+    <div class="empty"><h3 data-i18n="ჯერ არცერთი ორგანიზაცია არ არის">ჯერ არცერთი ორგანიზაცია არ არის</h3>
+      <p data-i18n="დაიწყეთ ახლის შექმნით — ანგარიშთა გეგმა (114 ანგარიში, საქართველოს სტანდარტი) ავტომატურად ჩაიტვირთება.">დაიწყეთ ახლის შექმნით — ანგარიშთა გეგმა (114 ანგარიში, საქართველოს სტანდარტი) ავტომატურად ჩაიტვირთება.</p></div>`}
   </div>
 
   <div class="card">
-    <h2>ახალი ორგანიზაცია</h2>
-    <p class="note">დასახელება და საიდენტიფიკაციო კოდი აუცილებელია; დანარჩენი შემდეგაც შეიცვლება.</p>
+    <h2 data-i18n="ახალი ორგანიზაცია">ახალი ორგანიზაცია</h2>
+    <p class="note" data-i18n="დასახელება და საიდენტიფიკაციო კოდი აუცილებელია; დანარჩენი შემდეგაც შეიცვლება.">დასახელება და საიდენტიფიკაციო კოდი აუცილებელია; დანარჩენი შემდეგაც შეიცვლება.</p>
     <div class="row r4">
-      <div style="grid-column:span 2"><label>დასახელება</label><input id="nOrg" placeholder="შპს „..."></div>
-      <div><label>საიდენტიფიკაციო კოდი</label><input id="nTin" class="mono" placeholder="9 ციფრი"></div>
-      <div><label>საანგარიშო წლის დასაწყისი</label><input id="nFrom" type="date" value="${new Date().getFullYear()}-01-01"></div>
+      <div style="grid-column:span 2"><label data-i18n="დასახელება">დასახელება</label><input id="nOrg" placeholder="შპს „..." data-i18n-ph="შპს „..."></div>
+      <div><label data-i18n="საიდენტიფიკაციო კოდი">საიდენტიფიკაციო კოდი</label><input id="nTin" class="mono" placeholder="9 ციფრი" data-i18n-ph="9 ციფრი"></div>
+      <div><label data-i18n="საანგარიშო წლის დასაწყისი">საანგარიშო წლის დასაწყისი</label><input id="nFrom" type="date" value="${new Date().getFullYear()}-01-01"></div>
     </div>
     <div class="row r3">
-      <div><label>დღგ-ს გადამხდელი</label>
-        <select id="nVat"><option value="1">კი</option><option value="0">არა</option></select></div>
-      <div><label>დღგ-ს განაკვეთი, %</label><input id="nRate" class="num" value="18"></div>
-      <div><label>საბაზისო ვალუტა</label><input value="GEL (ლარი)" disabled></div>
+      <div><label data-i18n="დღგ-ს გადამხდელი">დღგ-ს გადამხდელი</label>
+        <select id="nVat"><option value="1" data-i18n="კი">კი</option><option value="0" data-i18n="არა">არა</option></select></div>
+      <div><label data-i18n="დღგ-ს განაკვეთი, %">დღგ-ს განაკვეთი, %</label><input id="nRate" class="num" value="18"></div>
+      <div><label data-i18n="საბაზისო ვალუტა">საბაზისო ვალუტა</label><input value="GEL (ლარი)" disabled></div>
     </div>
     <div class="actions">
-      <button class="primary" data-act="neworg">ორგანიზაციის შექმნა</button>
+      <button class="primary" data-act="neworg" data-i18n="ორგანიზაციის შექმნა">ორგანიზაციის შექმნა</button>
       <span class="spacer"></span>
-      <button class="sm" data-act="expall">ყველაფრის ექსპორტი (JSON)</button>
+      <button class="sm" data-act="expall" data-i18n="ყველაფრის ექსპორტი (JSON)">ყველაფრის ექსპორტი (JSON)</button>
       <label style="text-transform:none;letter-spacing:0;font-weight:600;font-size:13px;margin:0;display:inline-flex;align-items:center;gap:8px">
-        იმპორტი: <input type="file" id="impAll" accept=".json" style="width:auto"></label>
+        <span data-i18n="იმპორტი:">იმპორტი:</span> <input type="file" id="impAll" accept=".json" style="width:auto"></label>
     </div>
   </div>`;
 }
@@ -195,39 +197,39 @@ function vJournal(org) {
 
   return `
   <div class="card">
-    <h2>ახალი გატარება</h2>
-    <p class="note">შენახვა შესაძლებელია მხოლოდ მაშინ, როცა დებეტი კრედიტს უტოლდება და ყველა სავალდებულო ველი შევსებულია.</p>
+    <h2 data-i18n="ახალი გატარება">ახალი გატარება</h2>
+    <p class="note" data-i18n="შენახვა შესაძლებელია მხოლოდ მაშინ, როცა დებეტი კრედიტს უტოლდება და ყველა სავალდებულო ველი შევსებულია.">შენახვა შესაძლებელია მხოლოდ მაშინ, როცა დებეტი კრედიტს უტოლდება და ყველა სავალდებულო ველი შევსებულია.</p>
     <div class="row r4">
-      <div><label>თარიღი</label><input type="date" value="${esc(draft.date)}" data-d="date"></div>
-      <div><label>დოკუმენტი</label><input value="${esc(draft.doc)}" data-d="doc" placeholder="ს/ფ, დეკლარაცია, დავალება"></div>
-      <div><label>ოპერაციის ტიპი</label><select data-d="typ">${TYPES.map(t => `<option ${draft.typ === t ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select></div>
-      <div><label>შაბლონი</label><select data-d="tpl">${Object.entries(TPL).map(([k, t]) => `<option value="${k}" ${draft.tpl === k ? 'selected' : ''}>${esc(t.label)}</option>`).join('')}</select></div>
+      <div><label data-i18n="თარიღი">თარიღი</label><input type="date" value="${esc(draft.date)}" data-d="date"></div>
+      <div><label data-i18n="დოკუმენტი">დოკუმენტი</label><input value="${esc(draft.doc)}" data-d="doc" placeholder="ს/ფ, დეკლარაცია, დავალება" data-i18n-ph="ს/ფ, დეკლარაცია, დავალება"></div>
+      <div><label data-i18n="ოპერაციის ტიპი">ოპერაციის ტიპი</label><select data-d="typ">${TYPES.map(t => `<option ${draft.typ === t ? 'selected' : ''} data-i18n="${esc(t)}">${esc(t)}</option>`).join('')}</select></div>
+      <div><label data-i18n="შაბლონი">შაბლონი</label><select data-d="tpl">${Object.entries(TPL).map(([k, t]) => `<option value="${k}" ${draft.tpl === k ? 'selected' : ''} data-i18n="${esc(t.label)}">${esc(t.label)}</option>`).join('')}</select></div>
     </div>
-    <div class="row r1"><div><label>შინაარსი</label><input value="${esc(draft.desc)}" data-d="desc" placeholder="რას ასახავს გატარება"></div></div>
-    <div class="row r1"><div><label>კომენტარი</label><input value="${esc(draft.cmt)}" data-d="cmt" placeholder="გაანგარიშება, დოკუმენტის დეტალები, სტანდარტის მუხლი"></div></div>
+    <div class="row r1"><div><label data-i18n="შინაარსი">შინაარსი</label><input value="${esc(draft.desc)}" data-d="desc" placeholder="რას ასახავს გატარება" data-i18n-ph="რას ასახავს გატარება"></div></div>
+    <div class="row r1"><div><label data-i18n="კომენტარი">კომენტარი</label><input value="${esc(draft.cmt)}" data-d="cmt" placeholder="გაანგარიშება, დოკუმენტის დეტალები, სტანდარტის მუხლი" data-i18n-ph="გაანგარიშება, დოკუმენტის დეტალები, სტანდარტის მუხლი"></div></div>
     <div class="tw"><table class="lines">
-      <thead><tr><th></th><th>ანგარიში</th><th>პარტნიორი</th><th>საქონელი</th><th class="num">რაოდ.</th>
-        <th>ვალუტა</th><th class="num">თანხა ვალ.</th><th class="num">კურსი</th><th class="num">დებეტი</th><th class="num">კრედიტი</th><th></th></tr></thead>
+      <thead><tr><th></th><th data-i18n="ანგარიში">ანგარიში</th><th data-i18n="პარტნიორი">პარტნიორი</th><th data-i18n="საქონელი">საქონელი</th><th class="num" data-i18n="რაოდ.">რაოდ.</th>
+        <th data-i18n="ვალუტა">ვალუტა</th><th class="num" data-i18n="თანხა ვალ.">თანხა ვალ.</th><th class="num" data-i18n="კურსი">კურსი</th><th class="num" data-i18n="დებეტი">დებეტი</th><th class="num" data-i18n="კრედიტი">კრედიტი</th><th></th></tr></thead>
       <tbody>${draft.lines.map(lineRow).join('')}</tbody>
-      <tfoot><tr class="tot"><td colspan="8">სულ</td><td class="num">${f2(v.dr)}</td><td class="num">${f2(v.cr)}</td><td></td></tr></tfoot>
+      <tfoot><tr class="tot"><td colspan="8" data-i18n="სულ">სულ</td><td class="num">${f2(v.dr)}</td><td class="num">${f2(v.cr)}</td><td></td></tr></tfoot>
     </table></div>
     <div class="actions">
-      <button data-act="addline" class="sm">+ ხაზის დამატება</button>
-      <span class="pill ${!touched ? '' : (v.errs.length ? 'err' : 'ok')}">${!touched ? 'ცარიელი ფორმა' : (v.errs.length ? 'ვერ ბალანსდება' : 'ბალანსდება — ' + f2(v.dr) + ' ₾')}</span>
+      <button data-act="addline" class="sm" data-i18n="+ ხაზის დამატება">+ ხაზის დამატება</button>
+      <span class="pill ${!touched ? '' : (v.errs.length ? 'err' : 'ok')}">${!touched ? '<span data-i18n="ცარიელი ფორმა">ცარიელი ფორმა</span>' : (v.errs.length ? '<span data-i18n="ვერ ბალანსდება">ვერ ბალანსდება</span>' : '<span data-i18n="ბალანსდება —">ბალანსდება —</span> ' + f2(v.dr) + ' ₾')}</span>
       <span class="spacer"></span>
-      <button data-act="clear" class="sm">გასუფთავება</button>
-      <button data-act="save" class="primary" ${v.errs.length ? 'disabled' : ''}>გატარების შენახვა</button>
+      <button data-act="clear" class="sm" data-i18n="გასუფთავება">გასუფთავება</button>
+      <button data-act="save" class="primary" ${v.errs.length ? 'disabled' : ''} data-i18n="გატარების შენახვა">გატარების შენახვა</button>
     </div>
     ${touched && v.errs.length ? `<div class="msg err"><b>შესამოწმებელია:</b><ul>${v.errs.map(e => `<li>${esc(e)}</li>`).join('')}</ul></div>` : ''}
   </div>
 
   <div class="card">
-    <h2>ჟურნალი</h2>
+    <h2 data-i18n="ჟურნალი">ჟურნალი</h2>
     <div class="filters">
-      <div><label>თვე</label><select data-f2="m"><option value="">ყველა</option>${months.map(m => `<option value="${m}" ${filter.m === m ? 'selected' : ''}>${m}</option>`).join('')}</select></div>
-      <div><label>ანგარიში (პრეფიქსი)</label><input value="${esc(filter.acc)}" data-f2="acc" class="mono" placeholder="მაგ. 1410"></div>
-      <div><label>პარტნიორი</label><input list="dl-p" value="${esc(filter.p)}" data-f2="p" placeholder="ყველა"></div>
-      <div style="flex:1;text-align:right;min-width:140px"><label>ნაჩვენები ბრუნვა</label>
+      <div><label data-i18n="თვე">თვე</label><select data-f2="m"><option value="" data-i18n="ყველა">ყველა</option>${months.map(m => `<option value="${m}" ${filter.m === m ? 'selected' : ''}>${m}</option>`).join('')}</select></div>
+      <div><label data-i18n="ანგარიში (პრეფიქსი)">ანგარიში (პრეფიქსი)</label><input value="${esc(filter.acc)}" data-f2="acc" class="mono" placeholder="მაგ. 1410" data-i18n-ph="მაგ. 1410"></div>
+      <div><label data-i18n="პარტნიორი">პარტნიორი</label><input list="dl-p" value="${esc(filter.p)}" data-f2="p" placeholder="ყველა" data-i18n-ph="ყველა"></div>
+      <div style="flex:1;text-align:right;min-width:140px"><label data-i18n="ნაჩვენები ბრუნვა">ნაჩვენები ბრუნვა</label>
         <div class="mono" style="font-size:16px;font-variant-numeric:tabular-nums">${f2(tot)} ₾</div></div>
     </div>
     ${shown.length ? shown.slice().reverse().map(e => {
@@ -240,17 +242,17 @@ function vJournal(org) {
           <button class="ghost sm" data-act="del" data-no="${e.no}" title="წაშლა">✕</button>
         </div>
         ${open[e.no] ? `<div class="jbody"><div class="tw"><table>
-          <thead><tr><th>ანგარიში</th><th>პარტნიორი</th><th>საქონელი</th><th class="num">რაოდ.</th><th>ვალ.</th>
-            <th class="num">თანხა ვალ.</th><th class="num">კურსი</th><th class="num">დებეტი</th><th class="num">კრედიტი</th></tr></thead>
+          <thead><tr><th data-i18n="ანგარიში">ანგარიში</th><th data-i18n="პარტნიორი">პარტნიორი</th><th data-i18n="საქონელი">საქონელი</th><th class="num" data-i18n="რაოდ.">რაოდ.</th><th data-i18n="ვალ.">ვალ.</th>
+            <th class="num" data-i18n="თანხა ვალ.">თანხა ვალ.</th><th class="num" data-i18n="კურსი">კურსი</th><th class="num" data-i18n="დებეტი">დებეტი</th><th class="num" data-i18n="კრედიტი">კრედიტი</th></tr></thead>
           <tbody>${e.lines.map(l => `<tr><td class="mono">${esc(l.acc)}<div class="hint">${esc((A.get(l.acc) || {}).n || '')}</div></td>
             <td>${esc(l.p)}</td><td class="mono">${esc(l.it)}</td><td class="num">${esc(l.qty)}</td><td>${esc(l.cur)}</td>
             <td class="num">${l.fc ? f2(l.fc) : ''}</td><td class="num">${esc(l.rate)}</td>
             <td class="num">${l.dr ? f2(l.dr) : ''}</td><td class="num">${l.cr ? f2(l.cr) : ''}</td></tr>`).join('')}</tbody>
         </table></div>${e.cmt ? `<div class="hint" style="margin-top:8px">${esc(e.cmt)}</div>` : ''}</div>` : ''}
-      </div>`; }).join('') : '<div class="msg">ჯერ არცერთი გატარება არ არის შენახული.</div>'}
+      </div>`; }).join('') : '<div class="msg" data-i18n="ჯერ არცერთი გატარება არ არის შენახული.">ჯერ არცერთი გატარება არ არის შენახული.</div>'}
     <div class="actions">
-      <button data-act="csv" class="sm">CSV ჩამოტვირთვა</button>
-      <button data-act="json" class="sm">JSON ჩამოტვირთვა</button>
+      <button data-act="csv" class="sm" data-i18n="CSV ჩამოტვირთვა">CSV ჩამოტვირთვა</button>
+      <button data-act="json" class="sm" data-i18n="JSON ჩამოტვირთვა">JSON ჩამოტვირთვა</button>
     </div>
   </div>${datalists(org)}`;
 }
@@ -259,15 +261,16 @@ function vUpload(org) {
   const noAcc = !org.rules.accounts.length;
   return `
   <div class="card">
-    <h2>დოკუმენტის ატვირთვა</h2>
-    <p class="note">საბანკო ამონაწერი (.xlsx) და rs.ge-ს რეალიზაციის რეპორტი (.xls / .xlsx / .csv).
+    <h2 data-i18n="დოკუმენტის ატვირთვა">დოკუმენტის ატვირთვა</h2>
+    <p class="note" data-i18n="საბანკო ამონაწერი (.xlsx) და rs.ge-ს რეალიზაციის რეპორტი (.xls / .xlsx / .csv).
+      ფაილი ბრაუზერშივე იშიფრება — არსად არ იგზავნება. ერთდროულად რამდენიმე ფაილიც შეიძლება.">საბანკო ამონაწერი (.xlsx) და rs.ge-ს რეალიზაციის რეპორტი (.xls / .xlsx / .csv).
       ფაილი ბრაუზერშივე იშიფრება — არსად არ იგზავნება. ერთდროულად რამდენიმე ფაილიც შეიძლება.</p>
-    ${noAcc ? `<div class="msg warn">საბანკო ამონაწერის ასატვირთად ჯერ დაამატეთ ანგარიში:
-      <b>ცნობარები → საბანკო ანგარიშები</b> (IBAN, ვალუტა და ბუღალტრული კოდი).</div>` : ''}
+    ${noAcc ? `<div class="msg warn"><span data-i18n="საბანკო ამონაწერის ასატვირთად ჯერ დაამატეთ ანგარიში:">საბანკო ამონაწერის ასატვირთად ჯერ დაამატეთ ანგარიში:</span>
+      <b data-i18n="ცნობარები → საბანკო ანგარიშები">ცნობარები → საბანკო ანგარიშები</b> <span data-i18n="(IBAN, ვალუტა და ბუღალტრული კოდი).">(IBAN, ვალუტა და ბუღალტრული კოდი).</span></div>` : ''}
     <div class="actions">
       <input type="file" id="fileIn" multiple accept=".xlsx,.xls,.csv" style="width:auto">
       <span class="spacer"></span>
-      <button data-act="closemonth" class="sm">თვის დახურვა — თვითღირებულება</button>
+      <button data-act="closemonth" class="sm" data-i18n="თვის დახურვა — თვითღირებულება">თვის დახურვა — თვითღირებულება</button>
     </div>
     <div id="impOut">${impHtml()}</div>
   </div>`;
@@ -289,8 +292,8 @@ function impHtml() {
     <label style="text-transform:none;letter-spacing:0;margin-top:6px;display:flex;align-items:center;gap:8px;font-weight:600">
       <input type="checkbox" id="regParties" checked> ცნობარში დამატება</label></div>` : ''}
   <div class="tw tall" style="margin-top:10px"><table>
-    <thead><tr><th style="width:26px"></th><th>თარიღი</th><th>დოკუმენტი</th><th>ტიპი</th><th>შინაარსი</th>
-      <th>ანგარიშები</th><th class="num">თანხა</th></tr></thead>
+    <thead><tr><th style="width:26px"></th><th data-i18n="თარიღი">თარიღი</th><th data-i18n="დოკუმენტი">დოკუმენტი</th><th data-i18n="ტიპი">ტიპი</th><th data-i18n="შინაარსი">შინაარსი</th>
+      <th data-i18n="ანგარიშები">ანგარიშები</th><th class="num" data-i18n="თანხა">თანხა</th></tr></thead>
     <tbody>${p.entries.map((e, i) => {
       const t = e.lines.reduce((s, l) => s + (+l.dr || 0), 0);
       return `<tr><td><input type="checkbox" data-imp="${i}" ${e._on ? 'checked' : ''}></td>
@@ -303,10 +306,10 @@ function impHtml() {
     <b>ვერ დავაკლასიფიცირე ${p.unmapped.length} ოპერაცია</b> — შეიყვანეთ ხელით ან დაამატეთ წესი ცნობარებში:
     <ul>${p.unmapped.slice(0, 15).map(u => `<li>${u.date} · ${esc(u.typ)} · ${f2(u.amount)} ${esc(u.ccy)} · ${esc(u.purpose)}</li>`).join('')}</ul></div>` : ''}
   <div class="actions">
-    <button data-act="impall" class="sm">ყველას მონიშვნა</button>
-    <button data-act="impnone" class="sm">მონიშვნის მოხსნა</button>
+    <button data-act="impall" class="sm" data-i18n="ყველას მონიშვნა">ყველას მონიშვნა</button>
+    <button data-act="impnone" class="sm" data-i18n="მონიშვნის მოხსნა">მონიშვნის მოხსნა</button>
     <span class="spacer"></span>
-    <button data-act="impcancel" class="sm">გაუქმება</button>
+    <button data-act="impcancel" class="sm" data-i18n="გაუქმება">გაუქმება</button>
     <button data-act="impsave" class="primary" ${on.length ? '' : 'disabled'}>ჟურნალში დამატება (${on.length})</button>
   </div>`;
 }
@@ -315,55 +318,55 @@ function vRef(org) {
   return `
   <div class="grid2">
     <div class="card" style="margin-top:0">
-      <h2>საბანკო ანგარიშები</h2>
-      <p class="note">ამონაწერის ამოსაცნობად: IBAN, ვალუტა და ბუღალტრული ანგარიშის კოდი.</p>
-      <div class="tw"><table><thead><tr><th>IBAN</th><th>ვალუტა</th><th>ანგარიში</th><th></th></tr></thead>
+      <h2 data-i18n="საბანკო ანგარიშები">საბანკო ანგარიშები</h2>
+      <p class="note" data-i18n="ამონაწერის ამოსაცნობად: IBAN, ვალუტა და ბუღალტრული ანგარიშის კოდი.">ამონაწერის ამოსაცნობად: IBAN, ვალუტა და ბუღალტრული ანგარიშის კოდი.</p>
+      <div class="tw"><table><thead><tr><th>IBAN</th><th data-i18n="ვალუტა">ვალუტა</th><th data-i18n="ანგარიში">ანგარიში</th><th></th></tr></thead>
         <tbody>${org.rules.accounts.map((a, i) => `<tr><td class="mono">${esc(a.iban)}</td><td>${esc(a.ccy)}</td>
           <td class="mono">${esc(a.code)}</td><td style="text-align:right"><button class="ghost sm" data-act="delacc" data-i="${i}">✕</button></td></tr>`).join('')
-          || '<tr><td colspan="4" class="hint">ჯერ არაფერია</td></tr>'}</tbody></table></div>
+          || '<tr><td colspan="4" class="hint" data-i18n="ჯერ არაფერია">ჯერ არაფერია</td></tr>'}</tbody></table></div>
       <div class="row r3" style="margin-top:12px">
         <div><label>IBAN</label><input id="bIban" class="mono" placeholder="GE00XX..."></div>
-        <div><label>ვალუტა</label><select id="bCcy"><option>GEL</option><option>USD</option><option>EUR</option><option>RUB</option></select></div>
-        <div><label>ანგარიში</label><input id="bCode" list="dl-acc" class="mono" placeholder="1210-001"></div>
+        <div><label data-i18n="ვალუტა">ვალუტა</label><select id="bCcy"><option>GEL</option><option>USD</option><option>EUR</option><option>RUB</option></select></div>
+        <div><label data-i18n="ანგარიში">ანგარიში</label><input id="bCode" list="dl-acc" class="mono" placeholder="1210-001"></div>
       </div>
-      <div class="actions"><button data-act="addacc" class="sm">დამატება</button></div>
+      <div class="actions"><button data-act="addacc" class="sm" data-i18n="დამატება">დამატება</button></div>
     </div>
 
     <div class="card" style="margin-top:0">
-      <h2>პარტნიორები</h2>
-      <p class="note">მყიდველები და მომწოდებლები. იმპორტისას ავტომატურადაც ემატება.</p>
-      <div class="tw tall"><table><thead><tr><th>დასახელება</th><th>ს/ნ</th><th>როლი</th><th></th></tr></thead>
+      <h2 data-i18n="პარტნიორები">პარტნიორები</h2>
+      <p class="note" data-i18n="მყიდველები და მომწოდებლები. იმპორტისას ავტომატურადაც ემატება.">მყიდველები და მომწოდებლები. იმპორტისას ავტომატურადაც ემატება.</p>
+      <div class="tw tall"><table><thead><tr><th data-i18n="დასახელება">დასახელება</th><th data-i18n="ს/ნ">ს/ნ</th><th data-i18n="როლი">როლი</th><th></th></tr></thead>
         <tbody>${org.partners.map((p, i) => `<tr><td>${esc(p.name)}</td><td class="mono">${esc(p.tin)}</td>
           <td>${esc(p.role)}</td><td style="text-align:right"><button class="ghost sm" data-act="delp" data-i="${i}">✕</button></td></tr>`).join('')
-          || '<tr><td colspan="4" class="hint">ჯერ არაფერია</td></tr>'}</tbody></table></div>
+          || '<tr><td colspan="4" class="hint" data-i18n="ჯერ არაფერია">ჯერ არაფერია</td></tr>'}</tbody></table></div>
       <div class="row r3" style="margin-top:12px">
-        <div><label>დასახელება</label><input id="pName"></div>
-        <div><label>ს/ნ</label><input id="pTin" class="mono"></div>
-        <div><label>როლი</label><select id="pRole"><option>მყიდველი</option><option>მომწოდებელი</option><option>სხვა</option></select></div>
+        <div><label data-i18n="დასახელება">დასახელება</label><input id="pName"></div>
+        <div><label data-i18n="ს/ნ">ს/ნ</label><input id="pTin" class="mono"></div>
+        <div><label data-i18n="როლი">როლი</label><select id="pRole"><option data-i18n="მყიდველი">მყიდველი</option><option data-i18n="მომწოდებელი">მომწოდებელი</option><option data-i18n="სხვა">სხვა</option></select></div>
       </div>
-      <div class="actions"><button data-act="addp" class="sm">დამატება</button></div>
+      <div class="actions"><button data-act="addp" class="sm" data-i18n="დამატება">დამატება</button></div>
     </div>
 
     <div class="card" style="margin-top:0">
-      <h2>საქონელი</h2>
-      <p class="note">კოდი (შტრიხკოდი ან შიდა), დასახელება და ზომის ერთეული.</p>
-      <div class="tw tall"><table><thead><tr><th>კოდი</th><th>დასახელება</th><th>ერთ.</th><th></th></tr></thead>
+      <h2 data-i18n="საქონელი">საქონელი</h2>
+      <p class="note" data-i18n="კოდი (შტრიხკოდი ან შიდა), დასახელება და ზომის ერთეული.">კოდი (შტრიხკოდი ან შიდა), დასახელება და ზომის ერთეული.</p>
+      <div class="tw tall"><table><thead><tr><th data-i18n="კოდი">კოდი</th><th data-i18n="დასახელება">დასახელება</th><th data-i18n="ერთ.">ერთ.</th><th></th></tr></thead>
         <tbody>${org.items.map((it, i) => `<tr><td class="mono">${esc(it.code)}</td><td>${esc(it.name)}</td>
           <td>${esc(it.unit)}</td><td style="text-align:right"><button class="ghost sm" data-act="deli" data-i="${i}">✕</button></td></tr>`).join('')
-          || '<tr><td colspan="4" class="hint">ჯერ არაფერია</td></tr>'}</tbody></table></div>
+          || '<tr><td colspan="4" class="hint" data-i18n="ჯერ არაფერია">ჯერ არაფერია</td></tr>'}</tbody></table></div>
       <div class="row r3" style="margin-top:12px">
-        <div><label>კოდი</label><input id="iCode" class="mono"></div>
-        <div><label>დასახელება</label><input id="iName"></div>
-        <div><label>ერთეული</label><input id="iUnit" placeholder="ცალი / კგ"></div>
+        <div><label data-i18n="კოდი">კოდი</label><input id="iCode" class="mono"></div>
+        <div><label data-i18n="დასახელება">დასახელება</label><input id="iName"></div>
+        <div><label data-i18n="ერთეული">ერთეული</label><input id="iUnit" placeholder="ცალი / კგ" data-i18n-ph="ცალი / კგ"></div>
       </div>
-      <div class="actions"><button data-act="addi" class="sm">დამატება</button></div>
+      <div class="actions"><button data-act="addi" class="sm" data-i18n="დამატება">დამატება</button></div>
     </div>
 
     <div class="card" style="margin-top:0">
-      <h2>ანგარიშთა გეგმა</h2>
-      <p class="note">საქართველოს სტანდარტი, ${org.coa.length} ანგარიში. „პ" — პარტნიორი სავალდებულოა, „ს" — საქონლის კოდი.</p>
-      <div class="tw tall"><table><thead><tr><th>კოდი</th><th>დასახელება</th><th>ჯგუფი</th><th>პ</th><th>ს</th></tr></thead>
-        <tbody>${org.coa.map(a => `<tr><td class="mono">${esc(a.c)}</td><td>${esc(a.n)}</td>
+      <h2 data-i18n="ანგარიშთა გეგმა">ანგარიშთა გეგმა</h2>
+      <p class="note"><span data-i18n="საქართველოს სტანდარტი">საქართველოს სტანდარტი</span>, ${org.coa.length} <span data-i18n="ანგარიში. „პ“ — პარტნიორი სავალდებულოა, „ს“ — საქონლის კოდი.">ანგარიში. „პ“ — პარტნიორი სავალდებულოა, „ს“ — საქონლის კოდი.</span></p>
+      <div class="tw tall"><table><thead><tr><th data-i18n="კოდი">კოდი</th><th data-i18n="დასახელება">დასახელება</th><th data-i18n="ჯგუფი">ჯგუფი</th><th data-i18n="პ">პ</th><th data-i18n="ს">ს</th></tr></thead>
+        <tbody data-no-i18n>${org.coa.map(a => `<tr><td class="mono">${esc(a.c)}</td><td>${esc(a.n)}</td>
           <td class="hint">${esc(a.g)}</td><td>${a.p ? '●' : ''}</td><td>${a.i ? '●' : ''}</td></tr>`).join('')}</tbody></table></div>
     </div>
   </div>${datalists(org)}`;
@@ -392,33 +395,33 @@ function vTB(org) {
   const card = cardAcc ? accountCard(org, cardAcc) : '';
   return `
   <div class="kpi">
-    <div class="cell"><span class="code">6xxx</span><div class="k">შემოსავალი</div><div class="v">${f0(rev)}</div></div>
-    <div class="cell"><span class="code">7xxx</span><div class="k">ხარჯი</div><div class="v">${f0(cogs)}</div></div>
-    <div class="cell"><span class="code">6−7</span><div class="k">შედეგი</div><div class="v">${f0(rev - cogs)}</div></div>
-    <div class="cell"><span class="code">1410</span><div class="k">დებიტორები</div><div class="v">${f0(recv)}</div></div>
-    <div class="cell"><span class="code">12xx</span><div class="k">ფული</div><div class="v">${f0(cash)}</div></div>
-    <div class="cell"><span class="code">3110</span><div class="k">კრედიტორები</div><div class="v">${f0(pay)}</div></div>
+    <div class="cell"><span class="code">6xxx</span><div class="k" data-i18n="შემოსავალი">შემოსავალი</div><div class="v">${f0(rev)}</div></div>
+    <div class="cell"><span class="code">7xxx</span><div class="k" data-i18n="ხარჯი">ხარჯი</div><div class="v">${f0(cogs)}</div></div>
+    <div class="cell"><span class="code">6−7</span><div class="k" data-i18n="შედეგი">შედეგი</div><div class="v">${f0(rev - cogs)}</div></div>
+    <div class="cell"><span class="code">1410</span><div class="k" data-i18n="დებიტორები">დებიტორები</div><div class="v">${f0(recv)}</div></div>
+    <div class="cell"><span class="code">12xx</span><div class="k" data-i18n="ფული">ფული</div><div class="v">${f0(cash)}</div></div>
+    <div class="cell"><span class="code">3110</span><div class="k" data-i18n="კრედიტორები">კრედიტორები</div><div class="v">${f0(pay)}</div></div>
   </div>
 
   <div class="card">
-    <h2>ბრუნვითი უწყისი</h2>
-    <p class="note">პერიოდის ბრუნვა და ნაშთი ანგარიშების ჭრილში. საწყისი ნაშთი ჟურნალის გატარებებიდან ითვლება.</p>
+    <h2 data-i18n="ბრუნვითი უწყისი">ბრუნვითი უწყისი</h2>
+    <p class="note" data-i18n="პერიოდის ბრუნვა და ნაშთი ანგარიშების ჭრილში. საწყისი ნაშთი ჟურნალის გატარებებიდან ითვლება.">პერიოდის ბრუნვა და ნაშთი ანგარიშების ჭრილში. საწყისი ნაშთი ჟურნალის გატარებებიდან ითვლება.</p>
     <div class="filters">
-      <div><label>დან</label><input type="date" value="${tbRange.from}" data-tb="from"></div>
-      <div><label>მდე</label><input type="date" value="${tbRange.to}" data-tb="to"></div>
-      <div style="min-width:200px"><label>ანგარიშის ბარათი</label>
-        <input list="dl-acc" value="${esc(cardAcc)}" data-tb="card" class="mono" placeholder="მაგ. 1410-001"></div>
-      <div style="flex:1;text-align:right"><label>საქონლის ნაშთი</label>
+      <div><label data-i18n="დან">დან</label><input type="date" value="${tbRange.from}" data-tb="from"></div>
+      <div><label data-i18n="მდე">მდე</label><input type="date" value="${tbRange.to}" data-tb="to"></div>
+      <div style="min-width:200px"><label data-i18n="ანგარიშის ბარათი">ანგარიშის ბარათი</label>
+        <input list="dl-acc" value="${esc(cardAcc)}" data-tb="card" class="mono" placeholder="მაგ. 1410-001" data-i18n-ph="მაგ. 1410-001"></div>
+      <div style="flex:1;text-align:right"><label data-i18n="საქონლის ნაშთი">საქონლის ნაშთი</label>
         <div class="mono" style="font-size:16px">${f2(stock)} ₾</div></div>
     </div>
     ${codes.length ? `<div class="tw tall"><table>
-      <thead><tr><th>ანგარიში</th><th>დასახელება</th><th class="num">ბრუნვა დტ</th><th class="num">ბრუნვა კტ</th>
-        <th class="num">ნაშთი დტ</th><th class="num">ნაშთი კტ</th></tr></thead>
+      <thead><tr><th data-i18n="ანგარიში">ანგარიში</th><th data-i18n="დასახელება">დასახელება</th><th class="num" data-i18n="ბრუნვა დტ">ბრუნვა დტ</th><th class="num" data-i18n="ბრუნვა კტ">ბრუნვა კტ</th>
+        <th class="num" data-i18n="ნაშთი დტ">ნაშთი დტ</th><th class="num" data-i18n="ნაშთი კტ">ნაშთი კტ</th></tr></thead>
       <tbody>${rows}</tbody>
-      <tfoot><tr><td colspan="2">ჯამი</td><td class="num">${f2(tdr)}</td><td class="num">${f2(tcr)}</td>
-        <td class="num" colspan="2">${Math.abs(tdr - tcr) < 0.005 ? '<span class="pill ok">ბალანსდება</span>' : '<span class="pill err">სხვაობა ' + f2(tdr - tcr) + '</span>'}</td></tr></tfoot>
-    </table></div>` : '<div class="msg">ჟურნალი ცარიელია.</div>'}
-    <div class="actions"><button data-act="tbcsv" class="sm">უწყისის CSV</button></div>
+      <tfoot><tr><td colspan="2" data-i18n="ჯამი">ჯამი</td><td class="num">${f2(tdr)}</td><td class="num">${f2(tcr)}</td>
+        <td class="num" colspan="2">${Math.abs(tdr - tcr) < 0.005 ? '<span class="pill ok" data-i18n="ბალანსდება">ბალანსდება</span>' : '<span class="pill err" data-i18n="სხვაობა ' + f2(tdr - tcr) + '">სხვაობა ' + f2(tdr - tcr) + '</span>'}</td></tr></tfoot>
+    </table></div>` : '<div class="msg" data-i18n="ჟურნალი ცარიელია.">ჟურნალი ცარიელია.</div>'}
+    <div class="actions"><button data-act="tbcsv" class="sm" data-i18n="უწყისის CSV">უწყისის CSV</button></div>
   </div>
   ${card}${datalists(org)}`;
 }
@@ -439,20 +442,20 @@ function accountCard(org, code) {
   return `<div class="card">
     <h2>ბარათი ${esc(code)} — ${esc((A.get(code) || {}).n || '?')}</h2>
     ${rows.length ? `<div class="tw tall"><table>
-      <thead><tr><th>თარიღი</th><th>დოკუმენტი</th><th>ოპერაცია</th><th>პარტნიორი</th><th>საქონელი</th>
-        <th class="num">დებეტი</th><th class="num">კრედიტი</th><th class="num">ნაშთი</th></tr></thead>
+      <thead><tr><th data-i18n="თარიღი">თარიღი</th><th data-i18n="დოკუმენტი">დოკუმენტი</th><th data-i18n="ოპერაცია">ოპერაცია</th><th data-i18n="პარტნიორი">პარტნიორი</th><th data-i18n="საქონელი">საქონელი</th>
+        <th class="num" data-i18n="დებეტი">დებეტი</th><th class="num" data-i18n="კრედიტი">კრედიტი</th><th class="num" data-i18n="ნაშთი">ნაშთი</th></tr></thead>
       <tbody>${rows.map(r => `<tr><td class="mono">${dmy(r.e.date)}</td><td class="mono">${esc(r.e.doc)}</td>
         <td>${esc(r.e.typ)}</td><td>${esc(r.l.p)}</td><td class="mono">${esc(r.l.it)}</td>
         <td class="num">${r.l.dr ? f2(r.l.dr) : ''}</td><td class="num">${r.l.cr ? f2(r.l.cr) : ''}</td>
         <td class="num">${f2(r.bal)}</td></tr>`).join('')}</tbody></table></div>`
-      : '<div class="msg">ამ ანგარიშზე ჩანაწერი არ არის.</div>'}
+      : '<div class="msg" data-i18n="ამ ანგარიშზე ჩანაწერი არ არის.">ამ ანგარიშზე ჩანაწერი არ არის.</div>'}
   </div>`;
 }
 
 function datalists(org) {
-  return `<datalist id="dl-acc">${org.coa.map(a => `<option value="${esc(a.c)}">${esc(a.n)}</option>`).join('')}</datalist>
-  <datalist id="dl-p">${org.partners.map(p => `<option value="${esc(p.name)}">${esc(p.tin)}</option>`).join('')}</datalist>
-  <datalist id="dl-i">${org.items.map(i => `<option value="${esc(i.code)}">${esc(i.name)}</option>`).join('')}</datalist>`;
+  return `<datalist id="dl-acc" data-no-i18n>${org.coa.map(a => `<option value="${esc(a.c)}">${esc(a.n)}</option>`).join('')}</datalist>
+  <datalist id="dl-p" data-no-i18n>${org.partners.map(p => `<option value="${esc(p.name)}">${esc(p.tin)}</option>`).join('')}</datalist>
+  <datalist id="dl-i" data-no-i18n>${org.items.map(i => `<option value="${esc(i.code)}">${esc(i.name)}</option>`).join('')}</datalist>`;
 }
 
 /* ============================================================== BACKUP UI
@@ -483,7 +486,7 @@ function bannerHtml() {
       <p class="txt">მონაცემები ინახება <b>მხოლოდ ამ ბრაუზერში</b>. რეგულარულად გადმოწერეთ სარეზერვო
         ასლი (ექსპორტი → JSON) — ბრაუზერის ისტორიის გაწმენდა მონაცემებს წაშლის.</p>
       <span class="acts">
-        <button class="sm primary" data-act="bkexport">ექსპორტი</button>
+        <button class="sm primary" data-act="bkexport" data-i18n="ექსპორტი">ექსპორტი</button>
         <button class="x" data-act="bkdismiss" title="დახურვა" aria-label="დახურვა">✕</button>
       </span></div>`);
   } else if (b && b.kind === 'stale') {
@@ -494,7 +497,7 @@ function bannerHtml() {
       <p class="txt"><b>${when}</b> — მას შემდეგ ${f0(b.added)} გატარება დაემატა. გადმოწერეთ ასლი,
         სანამ ბრაუზერი მონაცემებს გაასუფთავებს.</p>
       <span class="acts">
-        <button class="sm primary" data-act="bkexport">ექსპორტი</button>
+        <button class="sm primary" data-act="bkexport" data-i18n="ექსპორტი">ექსპორტი</button>
         <button class="x" data-act="bkdismiss" title="დახურვა" aria-label="დახურვა">✕</button>
       </span></div>`);
   }
@@ -515,20 +518,25 @@ function render() {
 
   $('#orgbox').innerHTML = `
     ${orgs.length ? `<select id="orgSel">${orgs.map(o => `<option value="${o.id}" ${org && o.id === org.id ? 'selected' : ''}>${esc(o.name)}</option>`).join('')}</select>` : ''}
-    <span class="status ${status.cls}"><span class="dot"></span>${esc(status.txt)}</span>`;
+    <span class="status ${status.cls}"><span class="dot"></span><span data-i18n="${esc(status.txt)}">${esc(status.txt)}</span></span>`;
 
   $('#tabs').innerHTML = Object.entries(TABS).map(([k, v]) =>
-    `<button role="tab" data-tab="${k}" aria-selected="${tab === k}" ${!org && k !== 'org' ? 'disabled' : ''}>${esc(v)}</button>`).join('');
+    `<button role="tab" data-tab="${k}" aria-selected="${tab === k}" ${!org && k !== 'org' ? 'disabled' : ''} data-i18n="${esc(v)}">${esc(v)}</button>`).join('');
 
   const bnr = $('#banner');
   if (bnr) bnr.innerHTML = bannerHtml();
+  applyI18n(); // header, tab strip and banner are outside #view
 
-  if (!org) { tab = 'org'; $('#view').innerHTML = vOrg(); return; }
+  if (!org) { tab = 'org'; $('#view').innerHTML = vOrg(); applyI18n(); return; }
   $('#view').innerHTML = tab === 'org' ? vOrg()
     : tab === 'journal' ? vJournal(org)
     : tab === 'upload' ? vUpload(org)
     : tab === 'ref' ? vRef(org)
     : vTB(org);
+
+  // The views are rebuilt from template strings on every render, so the
+  // translation has to be re-applied to the fresh nodes each time.
+  applyI18n();
 }
 
 /* ================================================================ EVENTS */
@@ -568,7 +576,7 @@ document.addEventListener('change', async ev => {
   if (t.id === 'orgSel') { store.setActive(t.value); pending = null; draft = newDraft(); return render(); }
   if (t.id === 'fileIn' && t.files && t.files.length) { const fs = [...t.files]; t.value = ''; return handleFiles(org, fs); }
   if (t.id === 'impAll' && t.files && t.files[0]) {
-    try { const n = store.import(await t.files[0].text()); setStatus('ok', `იმპორტი: ${n} ორგანიზაცია`); }
+    try { const n = store.import(await t.files[0].text()); setStatus('ok', `${tr('იმპორტი:')} ${n}`); }
     catch (e) { setStatus('err', 'იმპორტი ვერ მოხერხდა: ' + e.message); }
     t.value = ''; return render();
   }
@@ -748,7 +756,7 @@ function commit(org) {
        <span class="after">მრავალმომხმარებლიანი მუშაობა და ავტომატური გატარებები POS-იდან —
          ${martivadLink('month-close', 'Martivad.app-ში')}</span>
        <div class="inline-act">
-         <button class="sm primary" data-act="bkexport">სარეზერვო ასლის გადმოწერა</button>
+         <button class="sm primary" data-act="bkexport" data-i18n="სარეზერვო ასლის გადმოწერა">სარეზერვო ასლის გადმოწერა</button>
        </div>` };
   }
   render();
@@ -765,5 +773,7 @@ function applyTpl(org, k) {
 
 /* ტესტისთვის: martivadBackup.rewind(8) — ბოლო ექსპორტი 8 დღით უკან; .reset() — განულება */
 window.martivadBackup = backup;
+
+document.addEventListener('martivad:langchange', () => render());
 
 render();

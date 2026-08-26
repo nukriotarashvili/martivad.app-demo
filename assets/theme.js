@@ -50,7 +50,7 @@ export function effectiveTheme(mode = readTheme()) {
 }
 
 function paint(btn, mode) {
-  btn.innerHTML = `${ICONS[mode]}<span class="lbl" data-i18n="theme.${mode}">${LABELS[mode]}</span>`;
+  btn.innerHTML = `${ICONS[mode]}<span class="lbl" data-i18n="${LABELS[mode]}">${LABELS[mode]}</span>`;
   btn.setAttribute('data-theme-mode', mode);
   btn.setAttribute('aria-label', `თემა: ${LABELS[mode]}`);
   btn.title = `თემა: ${LABELS[mode]}`;
