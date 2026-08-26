@@ -9,6 +9,7 @@ import { importBank, importSales, closeMonth } from './importers.js';
 import * as backup from './backup.js';
 import { applyI18n, t as tr } from './i18n.js';
 import { initRates } from './ratesView.js';
+import { vImport, impState, impCsv, impPost } from './importView.js';
 
 /* ---------------------------------------------------------------- helpers */
 const $ = s => document.querySelector(s);
@@ -25,7 +26,7 @@ let status = { cls: '', txt: 'მზადაა' };
 const setStatus = (cls, txt) => { status = { cls, txt }; };
 
 const TABS = { org: 'ორგანიზაცია', journal: 'გატარებები', upload: 'ატვირთვა',
-               ref: 'ცნობარები', tb: 'უწყისი' };
+               imp: 'იმპორტი', ref: 'ცნობარები', tb: 'უწყისი' };
 
 /* ---------------------------------------------------------------- state */
 let draft = newDraft();
@@ -534,6 +535,7 @@ function render() {
   $('#view').innerHTML = tab === 'org' ? vOrg()
     : tab === 'journal' ? vJournal(org)
     : tab === 'upload' ? vUpload(org)
+    : tab === 'imp' ? vImport(org) + datalists(org)
     : tab === 'ref' ? vRef(org)
     : vTB(org);
 
@@ -548,6 +550,15 @@ function render() {
 /* ================================================================ EVENTS */
 document.addEventListener('input', ev => {
   const t = ev.target, org = store.active();
+  if (impInput(t)) {
+    render();
+    // keep the caret where the accountant left it — the whole panel is redrawn
+    const sel = t.dataset.impLine !== undefined
+      ? document.querySelector(`[data-imp-line="${t.dataset.impLine}"][data-f="${t.dataset.f}"]`)
+      : document.querySelector(`[data-imp="${t.dataset.imp}"]`);
+    if (sel) { sel.focus(); try { sel.setSelectionRange(sel.value.length, sel.value.length); } catch (e) {} }
+    return;
+  }
   if (t.dataset.d) {
     if (t.dataset.d === 'tpl') return applyTpl(org, t.value);
     draft[t.dataset.d] = t.value;
@@ -577,8 +588,25 @@ document.addEventListener('input', ev => {
   }
 });
 
+function impInput(t) {
+  if (t.dataset.imp !== undefined) {
+    const k = t.dataset.imp;
+    impState[k] = t.type === 'checkbox' ? t.checked : t.value;
+    impState.msg = null;
+    return true;
+  }
+  if (t.dataset.impLine !== undefined) {
+    const i = +t.dataset.impLine;
+    if (impState.lines[i]) impState.lines[i][t.dataset.f] = t.value;
+    impState.msg = null;
+    return true;
+  }
+  return false;
+}
+
 document.addEventListener('change', async ev => {
   const t = ev.target, org = store.active();
+  if (impInput(t)) return render();
   if (t.id === 'orgSel') { store.setActive(t.value); pending = null; draft = newDraft(); return render(); }
   if (t.id === 'fileIn' && t.files && t.files.length) { const fs = [...t.files]; t.value = ''; return handleFiles(org, fs); }
   if (t.id === 'impAll' && t.files && t.files[0]) {
@@ -620,6 +648,10 @@ document.addEventListener('click', async ev => {
       store.remove(b.dataset.id); setStatus('warn', 'წაიშალა'); return render();
     } return;
   }
+  if (a === 'imp-add') { impState.lines.push({ name: '', qty: '', price: '' }); return render(); }
+  if (a === 'imp-del') { impState.lines.splice(+b.dataset.i, 1); if (!impState.lines.length) impState.lines.push({ name: '', qty: '', price: '' }); return render(); }
+  if (a === 'imp-csv') { download('importi-gaangarisheba.csv', impCsv(), 'text/csv'); return; }
+  if (a === 'imp-post') { impPost(org); return render(); }
   if (a === 'expall') { doBackup(); return render(); }
   if (a === 'bkexport') { doBackup(); return render(); }
   if (a === 'bkdismiss') { backup.snooze(); backup.markSeen(); flash = null; return render(); }
