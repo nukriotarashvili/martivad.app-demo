@@ -158,7 +158,7 @@ function vOrg() {
     <div class="row r3">
       <div><label data-i18n="დღგ-ს გადამხდელი">დღგ-ს გადამხდელი</label>
         <select id="nVat"><option value="1" data-i18n="კი">კი</option><option value="0" data-i18n="არა">არა</option></select></div>
-      <div><label data-i18n="დღგ-ს განაკვეთი, %">დღგ-ს განაკვეთი, %</label><input id="nRate" class="num" value="18"></div>
+      <div><label data-i18n="დღგ-ს განაკვეთი, %">დღგ-ს განაკვეთი, %</label><input inputmode="decimal" id="nRate" class="num" value="18"></div>
       <div><label data-i18n="საბაზისო ვალუტა">საბაზისო ვალუტა</label><input value="GEL (ლარი)" disabled></div>
     </div>
     <div class="actions">
@@ -190,12 +190,12 @@ function vJournal(org) {
      <td style="min-width:120px"><input list="dl-acc" value="${esc(l.acc)}" data-i="${i}" data-f="acc" class="mono ${l.acc && !a ? 'bad' : ''}" placeholder="1410-001"></td>
      <td style="min-width:170px"><input list="dl-p" value="${esc(l.p)}" data-i="${i}" data-f="p" placeholder="${needP ? 'სავალდებულო' : '—'}" ${needP && !l.p ? 'class="bad"' : ''}></td>
      <td style="min-width:130px"><input list="dl-i" value="${esc(l.it)}" data-i="${i}" data-f="it" class="mono ${needI && !l.it ? 'bad' : ''}" placeholder="${needI ? 'სავალდებულო' : '—'}"></td>
-     <td style="width:88px"><input value="${esc(l.qty)}" data-i="${i}" data-f="qty" class="num" placeholder="—"></td>
+     <td style="width:88px"><input inputmode="decimal" value="${esc(l.qty)}" data-i="${i}" data-f="qty" class="num" placeholder="—"></td>
      <td style="width:74px"><select data-i="${i}" data-f="cur">${['GEL', 'USD', 'EUR', 'RUB'].map(c => `<option ${l.cur === c ? 'selected' : ''}>${c}</option>`).join('')}</select></td>
-     <td style="width:110px"><input value="${esc(l.fc)}" data-i="${i}" data-f="fc" class="num" placeholder="—" ${l.cur === 'GEL' ? 'disabled' : ''}></td>
-     <td style="width:96px"><input value="${esc(l.rate)}" data-i="${i}" data-f="rate" class="num" placeholder="—" ${l.cur === 'GEL' ? 'disabled' : ''}></td>
-     <td style="width:118px"><input value="${esc(l.dr)}" data-i="${i}" data-f="dr" class="num" placeholder="0.00"></td>
-     <td style="width:118px"><input value="${esc(l.cr)}" data-i="${i}" data-f="cr" class="num" placeholder="0.00"></td>
+     <td style="width:110px"><input inputmode="decimal" value="${esc(l.fc)}" data-i="${i}" data-f="fc" class="num" placeholder="—" ${l.cur === 'GEL' ? 'disabled' : ''}></td>
+     <td style="width:96px"><input inputmode="decimal" value="${esc(l.rate)}" data-i="${i}" data-f="rate" class="num" placeholder="—" ${l.cur === 'GEL' ? 'disabled' : ''}></td>
+     <td style="width:118px"><input inputmode="decimal" value="${esc(l.dr)}" data-i="${i}" data-f="dr" class="num" placeholder="0.00"></td>
+     <td style="width:118px"><input inputmode="decimal" value="${esc(l.cr)}" data-i="${i}" data-f="cr" class="num" placeholder="0.00"></td>
      <td style="width:30px"><button class="ghost" data-act="delline" data-i="${i}" title="ხაზის წაშლა">✕</button></td></tr>`;
   };
 

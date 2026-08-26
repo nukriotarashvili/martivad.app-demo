@@ -337,3 +337,60 @@ button.copied{background:var(--good-soft);color:var(--good);border-color:var(--g
 .imp-preview .tw{padding:0 12px 12px}
 @media(max-width:980px){.imp-kpi{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:560px){.imp-kpi{grid-template-columns:repeat(2,1fr)}}
+
+/* ============================================================================
+   Responsive pass (Phase E).
+
+   Two root causes made narrow screens scroll sideways, and neither was the
+   tables — those already live in `.tw` and scroll inside themselves:
+
+     1. grid children default to `min-width:auto`, so a cell never shrinks
+        below its content and the row pushes the card wider than the viewport;
+     2. the JSON file input carried `width:auto`, which does not shrink either.
+
+   Table strategy, applied consistently everywhere: horizontal scroll INSIDE
+   `.tw`, with a shadow on the right edge as the affordance. Stacking columns
+   was rejected — a trial balance read as stacked cards loses the column
+   alignment that makes it checkable at a glance.
+   ========================================================================== */
+
+/* 1. let grid and flex children actually shrink */
+.row > div, .rate, .calc-out, .imp-flags, .actions > * { min-width: 0 }
+/* .grid2 children are whole cards; without this the card refuses to shrink
+   below its content and drags the page sideways on a phone. */
+.grid2 > *, .card, .kpi .cell { min-width: 0 }
+input, select, textarea { max-width: 100% }
+input[type="file"] { max-width: 100%; min-width: 0 }
+
+/* 2. one column on phones — two columns of numeric inputs do not fit 360px */
+@media (max-width: 560px) {
+  .row.r4, .row.r3, .grid2 { grid-template-columns: 1fr }
+  .hd { gap: 8px }
+  .wrap { padding-left: 12px; padding-right: 12px }
+  .card { padding: 14px 12px 16px }
+}
+
+/* 3. scroll affordance: a shadow that appears only while there is more table
+      to the right (background-attachment:local does the detection in CSS) */
+.tw {
+  background:
+    linear-gradient(to right, var(--card) 30%, transparent) left center / 24px 100% no-repeat local,
+    linear-gradient(to left, var(--card) 30%, transparent) right center / 24px 100% no-repeat local,
+    linear-gradient(to right, rgba(0,0,0,.16), transparent) left center / 12px 100% no-repeat scroll,
+    linear-gradient(to left, rgba(0,0,0,.16), transparent) right center / 12px 100% no-repeat scroll;
+}
+
+/* 4. touch targets — the brief asks for >=44px on phones */
+@media (pointer: coarse), (max-width: 560px) {
+  input, select, textarea, button { min-height: 44px }
+  button.sm, .lines button, nav.tabs button { min-height: 44px }
+  .lines input, .lines select { min-height: 44px }
+  /* class selectors set these to 34px, so they need naming to be overridden */
+  .theme-toggle, .lang-switch button { min-height: 44px }
+  /* a native checkbox cannot be 44px without looking broken; the tap target is
+     the label around it (.chk is already 44px) and the table cell padding. */
+  input[type="checkbox"] { min-height: 22px; width: 22px; height: 22px }
+  .lines td:has(> input[type="checkbox"]) { padding: 11px 8px }
+  /* 16px keeps iOS from zooming the viewport on focus */
+  input, select, textarea { font-size: 16px }
+}
