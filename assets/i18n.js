@@ -185,7 +185,18 @@ const en = {
   'ანგარიში. „პ“ — პარტნიორი სავალდებულოა, „ს“ — საქონლის კოდი.':
     'accounts. “P” — counterparty required, “C” — item code required.',
 
-  // ── ვალუტა (ფაზა C ამ გასაღებებს იყენებს)
+  // ── ვალუტის კურსები (ფაზა C)
+  'ვალუტის კურსები': 'Exchange rates',
+  'ეროვნული ბანკის ოფიციალური კურსი. ხელით შეყვანილი მნიშვნელობა ჩამოტვირთულს ანაცვლებს.':
+    'Official National Bank of Georgia rate. A manually entered value overrides the downloaded one.',
+  'კურსები იტვირთება…': 'Loading rates…',
+  'კურსები მიუწვდომელია — შეიყვანეთ ხელით.': 'Rates unavailable — enter them manually.',
+  'ქეშირებული კურსი': 'Cached rate',
+  'განახლება': 'Refresh',
+  'მიმართულება': 'Direction',
+  'დღევანდელი': "Today's", 'არჩეული თარიღის': 'For a chosen date', 'ხელით': 'Manual',
+  'კურსი ხელით': 'Rate, manual',
+  'შედეგის კოპირება': 'Copy result',
   'ვალუტის კონვერტაცია': 'Currency conversion',
 };
 
@@ -346,6 +357,18 @@ const ru = {
   'ანგარიში. „პ“ — პარტნიორი სავალდებულოა, „ს“ — საქონლის კოდი.':
     'счетов. «П» — контрагент обязателен, «С» — код товара обязателен.',
 
+  // ── ვალუტის კურსები (ფაზა C)
+  'ვალუტის კურსები': 'Курсы валют',
+  'ეროვნული ბანკის ოფიციალური კურსი. ხელით შეყვანილი მნიშვნელობა ჩამოტვირთულს ანაცვლებს.':
+    'Официальный курс Национального банка Грузии. Введённое вручную значение заменяет загруженное.',
+  'კურსები იტვირთება…': 'Курсы загружаются…',
+  'კურსები მიუწვდომელია — შეიყვანეთ ხელით.': 'Курсы недоступны — введите вручную.',
+  'ქეშირებული კურსი': 'Кэшированный курс',
+  'განახლება': 'Обновить',
+  'მიმართულება': 'Направление',
+  'დღევანდელი': 'Сегодняшний', 'არჩეული თარიღის': 'На выбранную дату', 'ხელით': 'Вручную',
+  'კურსი ხელით': 'Курс вручную',
+  'შედეგის კოპირება': 'Копировать результат',
   'ვალუტის კონვერტაცია': 'Конвертация валют',
 };
 
@@ -429,8 +452,11 @@ export function initLangSwitch(container) {
     const b = ev.target.closest('[data-lang]');
     if (!b) return;
     setLang(b.dataset.lang);
-    paint();
   });
+  // Repaint on the event, not after the click: setLang() is also called
+  // programmatically, and painting only in the handler left the pressed state
+  // pointing at the previous language.
+  document.addEventListener('martivad:langchange', paint);
 }
 
 /**
