@@ -1,44 +1,138 @@
+/* ============================================================================
+   styles.css — ტიპოგრაფია, ტოკენები, კომპონენტები.
+
+   ტოკენები: ცვლადების სახელები განზრახ ემთხვევა მთავარი აპლიკაციის
+   (www.martivad.app) DESIGN-TOKENS-C1 სისტემას — --surface-* და --space-*.
+   დიზაინერის pass-ის შემდეგ მხოლოდ მნიშვნელობები განახლდება და ორივე
+   აპლიკაცია ერთად „გადაიღებება".
+
+   ამ ფაილის ლოკალური სახელები (--paper/--card/--ink/…) შენარჩუნებულია
+   თავსებადობისთვის და C1-ის ტოკენებზეა აწყობილი — ისინი ცალკე პალიტრა
+   აღარაა, არამედ ალიასები.
+   ========================================================================== */
+
+/* ---------------------------------------------------------------- FiraGO
+   Self-hosted, იგივე ფაილები რაც მთავარ აპლიკაციაში. ორი unicode-ქვეჯგუფი
+   თითო წონაზე: ქართული (მხედრული + ₾ U+20BE) და ლათინური, რომ ბრაუზერმა
+   მხოლოდ საჭირო ფაილი ჩამოტვირთოს. ლიცენზია: assets/fonts/FiraGO-OFL.txt   */
+@font-face{font-family:"FiraGO";font-style:normal;font-weight:400;font-display:swap;
+  src:url("fonts/firago-regular-georgian.woff2") format("woff2");unicode-range:U+10D0-10FF,U+20BE}
+@font-face{font-family:"FiraGO";font-style:normal;font-weight:400;font-display:swap;
+  src:url("fonts/firago-regular-latin.woff2") format("woff2")}
+@font-face{font-family:"FiraGO";font-style:normal;font-weight:500;font-display:swap;
+  src:url("fonts/firago-medium-georgian.woff2") format("woff2");unicode-range:U+10D0-10FF,U+20BE}
+@font-face{font-family:"FiraGO";font-style:normal;font-weight:500;font-display:swap;
+  src:url("fonts/firago-medium-latin.woff2") format("woff2")}
+@font-face{font-family:"FiraGO";font-style:normal;font-weight:600;font-display:swap;
+  src:url("fonts/firago-semibold-georgian.woff2") format("woff2");unicode-range:U+10D0-10FF,U+20BE}
+@font-face{font-family:"FiraGO";font-style:normal;font-weight:600;font-display:swap;
+  src:url("fonts/firago-semibold-latin.woff2") format("woff2")}
+@font-face{font-family:"FiraGO";font-style:normal;font-weight:700;font-display:swap;
+  src:url("fonts/firago-bold-georgian.woff2") format("woff2");unicode-range:U+10D0-10FF,U+20BE}
+@font-face{font-family:"FiraGO";font-style:normal;font-weight:700;font-display:swap;
+  src:url("fonts/firago-bold-latin.woff2") format("woff2")}
+
 :root{
   color-scheme: light;
-  --paper:#F0F1EC; --card:#FBFBF8; --card-2:#F5F6F1; --card-3:#EEEFE8;
-  --ink:#14181A; --ink-2:#5A6260; --ink-3:#87908D;
-  --rule:#DBDDD4; --rule-2:#C8CBC0;
-  --accent:#1F4E5F; --accent-ink:#FBFBF8;
-  --good:#2F7D4F; --good-soft:#E4F0E9; --warn:#A8791D; --warn-soft:#F6EEDC;
-  --bad:#9E3B2C; --bad-soft:#F6E6E2;
-  --shadow:0 1px 0 rgba(20,24,26,.04);
+
+  /* -- C1 typography ----------------------------------------------------- */
+  --font-sans:"FiraGO","Noto Sans Georgian",system-ui,sans-serif;
+  /* FiraGO has no monospace cut; numeric columns use tabular figures instead
+     (see .mono/.num), and true monospace falls back to the system stack. */
+  --font-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+
+  /* -- C1 spacing — 4px grid --------------------------------------------- */
+  --space-1:.25rem; --space-2:.5rem;  --space-3:.75rem; --space-4:1rem;
+  --space-5:1.25rem; --space-6:1.5rem; --space-8:2rem;  --space-10:2.5rem;
+  --space-12:3rem;  --space-16:4rem;
+
+  /* -- C1 surface tokens — light (mirrors the main app's :root) ----------- */
+  --surface-bg:#f5f7fa;
+  --surface-bg-raised:#ffffff;
+  --surface-fg:#17233b;
+  --surface-fg-muted:#55647f;
+  --surface-border:#dfe5ee;
+  --surface-accent:#1f6be0;
+  --surface-accent-hover:#1a5fc9;
+  --surface-accent-press:#1754b2;
+  --surface-accent-fg:#ffffff;
+  --surface-success:#177e4d;
+  --surface-warning:#96610a;
+  --surface-error:#d5333f;
+
+  --shadow:0 1px 0 rgba(23,35,59,.04);
 }
+
+/* -- C1 surface tokens — dark (mirrors the main app's data-surface="pos") -- */
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
   color-scheme: dark;
-  --paper:#0F1214; --card:#181C1F; --card-2:#1F2427; --card-3:#242A2E;
-  --ink:#EDEFEA; --ink-2:#98A29F; --ink-3:#6E7876;
-  --rule:#2A3134; --rule-2:#39423F;
-  --accent:#6FA6B8; --accent-ink:#0F1214;
-  --good:#59B07C; --good-soft:#16281F; --warn:#D2A23F; --warn-soft:#2A2417;
-  --bad:#D2705C; --bad-soft:#2C1B18;
+  --surface-bg:#0b1322;
+  --surface-bg-raised:#141e31;
+  --surface-fg:#f4f7fc;
+  --surface-fg-muted:#9daec9;
+  --surface-border:#324566;
+  --surface-accent:#4d9eff;
+  --surface-accent-hover:#66acff;
+  --surface-accent-press:#3e8be8;
+  --surface-accent-fg:#071527;
+  --surface-success:#3dd68c;
+  --surface-warning:#f6b73c;
+  --surface-error:#ff6f6f;
   --shadow:none;
 }}
 :root[data-theme="dark"]{
   color-scheme: dark;
-  --paper:#0F1214; --card:#181C1F; --card-2:#1F2427; --card-3:#242A2E;
-  --ink:#EDEFEA; --ink-2:#98A29F; --ink-3:#6E7876;
-  --rule:#2A3134; --rule-2:#39423F;
-  --accent:#6FA6B8; --accent-ink:#0F1214;
-  --good:#59B07C; --good-soft:#16281F; --warn:#D2A23F; --warn-soft:#2A2417;
-  --bad:#D2705C; --bad-soft:#2C1B18;
+  --surface-bg:#0b1322;
+  --surface-bg-raised:#141e31;
+  --surface-fg:#f4f7fc;
+  --surface-fg-muted:#9daec9;
+  --surface-border:#324566;
+  --surface-accent:#4d9eff;
+  --surface-accent-hover:#66acff;
+  --surface-accent-press:#3e8be8;
+  --surface-accent-fg:#071527;
+  --surface-success:#3dd68c;
+  --surface-warning:#f6b73c;
+  --surface-error:#ff6f6f;
   --shadow:none;
 }
+
+/* -- Local aliases -------------------------------------------------------
+   The component CSS below was written against these names. They now derive
+   from the C1 tokens, so there is exactly ONE palette to edit. The extra
+   steps (card-2/card-3, ink-3, rule-2, *-soft) are mixed from the tokens
+   rather than hand-picked, so they follow a re-skin automatically.          */
+:root{
+  --paper:var(--surface-bg);
+  --card:var(--surface-bg-raised);
+  --card-2:color-mix(in srgb,var(--surface-bg-raised) 92%,var(--surface-fg));
+  --card-3:color-mix(in srgb,var(--surface-bg-raised) 85%,var(--surface-fg));
+  --ink:var(--surface-fg);
+  --ink-2:var(--surface-fg-muted);
+  --ink-3:color-mix(in srgb,var(--surface-fg-muted) 75%,var(--surface-bg));
+  --rule:var(--surface-border);
+  --rule-2:color-mix(in srgb,var(--surface-border) 78%,var(--surface-fg));
+  --accent:var(--surface-accent);
+  --accent-ink:var(--surface-accent-fg);
+  --good:var(--surface-success);
+  --good-soft:color-mix(in srgb,var(--surface-success) 12%,var(--surface-bg-raised));
+  --warn:var(--surface-warning);
+  --warn-soft:color-mix(in srgb,var(--surface-warning) 12%,var(--surface-bg-raised));
+  --bad:var(--surface-error);
+  --bad-soft:color-mix(in srgb,var(--surface-error) 12%,var(--surface-bg-raised));
+}
+
 *{box-sizing:border-box}
 html,body{margin:0}
 body{background:var(--paper);color:var(--ink);
-  font-family:"Noto Sans Georgian","Segoe UI",system-ui,sans-serif;font-size:14px;line-height:1.5;
+  font-family:var(--font-sans);font-size:14px;line-height:1.5;
   -webkit-font-smoothing:antialiased}
 .wrap{max-width:1400px;margin:0 auto;padding:0 18px 70px}
 
 header{border-bottom:1px solid var(--rule-2);background:var(--card);position:sticky;top:0;z-index:20}
 .hd{max-width:1400px;margin:0 auto;padding:14px 18px;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .logo{display:flex;align-items:center;gap:10px;color:var(--accent);text-decoration:none;flex:none}
-.logo .wm{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:16px;letter-spacing:-.02em;color:var(--ink)}
+.logo .wm{font-family:var(--font-mono);font-weight:600;font-size:16px;letter-spacing:-.02em;color:var(--ink)}
 .logo .tld{color:var(--accent)}
 .orgbox{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .orgbox select{width:auto;min-width:190px}
@@ -54,7 +148,7 @@ nav.tabs button:hover{color:var(--ink)}
 nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
 
 .card{background:var(--card);border:1px solid var(--rule);padding:16px 18px 18px;margin-top:18px;box-shadow:var(--shadow)}
-.card>h2{font-family:"Noto Serif Georgian",Georgia,serif;font-size:16px;font-weight:600;margin:0 0 3px}
+.card>h2{font-family:var(--font-sans);font-size:16px;font-weight:600;margin:0 0 3px}
 .card>.note{font-size:11.5px;color:var(--ink-2);margin:0 0 14px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 @media(max-width:900px){.grid2{grid-template-columns:1fr}}
@@ -64,7 +158,7 @@ input,select,textarea,button{font-family:inherit;font-size:13.5px;color:var(--in
 input,select,textarea{width:100%;padding:7px 9px;background:var(--card-2);border:1px solid var(--rule-2);border-radius:0}
 input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);border-color:var(--accent)}
 input[type=checkbox]{width:auto}
-input.num{font-family:"IBM Plex Mono",monospace;text-align:right;font-variant-numeric:tabular-nums}
+input.num{font-family:var(--font-mono);text-align:right;font-variant-numeric:tabular-nums}
 input.bad,select.bad{border-color:var(--bad);background:var(--bad-soft)}
 .row{display:grid;gap:12px;margin-bottom:12px}
 .r4{grid-template-columns:150px 170px 1fr 1fr}
@@ -90,11 +184,11 @@ table{border-collapse:collapse;width:100%;font-size:12.5px}
 th,td{padding:6px 8px;text-align:left;border-bottom:1px solid var(--rule);vertical-align:middle}
 th{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-2);font-weight:600;
    border-bottom:1px solid var(--rule-2);white-space:nowrap;position:sticky;top:0;background:var(--card);z-index:1}
-td.num,th.num{text-align:right;font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+td.num,th.num{text-align:right;font-family:var(--font-mono);font-variant-numeric:tabular-nums}
 .lines input,.lines select{padding:5px 7px;font-size:12.5px}
 .lines td{padding:4px 4px}
-.lines td:first-child{color:var(--ink-3);font-family:"IBM Plex Mono",monospace;font-size:11px;width:22px;text-align:center}
-.mono{font-family:"IBM Plex Mono",monospace}
+.lines td:first-child{color:var(--ink-3);font-family:var(--font-mono);font-size:11px;width:22px;text-align:center}
+.mono{font-family:var(--font-mono)}
 .tot{background:var(--card-2);font-weight:600}
 .tot td{border-top:1px solid var(--rule-2);border-bottom:0}
 tfoot td{font-weight:600;border-top:1px solid var(--rule-2);border-bottom:0;background:var(--card-2);
@@ -112,23 +206,23 @@ tfoot td{font-weight:600;border-top:1px solid var(--rule-2);border-bottom:0;back
 .jent{border:1px solid var(--rule);margin-bottom:10px;background:var(--card-2)}
 .jhd{display:flex;gap:12px;align-items:center;padding:9px 12px;cursor:pointer;flex-wrap:wrap}
 .jhd:hover{background:var(--card-3)}
-.jhd .d{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-2);white-space:nowrap}
+.jhd .d{font-family:var(--font-mono);font-size:12px;color:var(--ink-2);white-space:nowrap}
 .jhd .t{font-weight:600;font-size:13px;flex:1;min-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.jhd .a{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;font-size:13px;white-space:nowrap}
+.jhd .a{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:13px;white-space:nowrap}
 .jbody{padding:0 12px 10px;background:var(--card)}
 .filters{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px}
 .filters>div{min-width:150px}
 .hint{font-size:11px;color:var(--ink-3);margin-top:3px}
 pre{background:var(--card-2);border:1px solid var(--rule);padding:12px;overflow:auto;max-height:300px;
-    font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.5;margin:10px 0 0}
+    font-family:var(--font-mono);font-size:11.5px;line-height:1.5;margin:10px 0 0}
 
 .kpi{display:grid;grid-template-columns:repeat(6,1fr);border:1px solid var(--rule-2);background:var(--card);margin-top:18px}
 .kpi .cell{position:relative;padding:14px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);min-width:0}
 .kpi .cell:nth-child(6n){border-right:0}
 .kpi .cell:nth-last-child(-n+6){border-bottom:0}
-.kpi .code{position:absolute;top:7px;right:9px;font-family:"IBM Plex Mono",monospace;font-size:9.5px;color:var(--ink-3)}
+.kpi .code{position:absolute;top:7px;right:9px;font-family:var(--font-mono);font-size:9.5px;color:var(--ink-3)}
 .kpi .k{font-size:11px;color:var(--ink-2);letter-spacing:.03em;text-transform:uppercase;font-weight:600}
-.kpi .v{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;font-size:19px;font-weight:500;
+.kpi .v{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:19px;font-weight:500;
   margin-top:6px;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media(max-width:980px){.kpi{grid-template-columns:repeat(3,1fr)}
   .kpi .cell:nth-child(6n){border-right:1px solid var(--rule)}
@@ -138,7 +232,7 @@ pre{background:var(--card-2);border:1px solid var(--rule);padding:12px;overflow:
   .kpi .cell:nth-child(2n){border-right:0!important}}
 
 .empty{text-align:center;padding:56px 20px;color:var(--ink-2)}
-.empty h3{font-family:"Noto Serif Georgian",Georgia,serif;font-size:19px;margin:0 0 8px;color:var(--ink)}
+.empty h3{font-family:var(--font-sans);font-size:19px;margin:0 0 8px;color:var(--ink)}
 .empty p{max-width:44ch;margin:0 auto 18px}
 
 .brandbar{margin-top:22px;padding:14px 16px;border:1px solid var(--rule);background:var(--card);
@@ -147,3 +241,47 @@ pre{background:var(--card-2);border:1px solid var(--rule);padding:12px;overflow:
 .brandbar b{color:var(--ink);font-weight:600}
 .brandbar a[href]{color:var(--accent);text-decoration:none;border-bottom:1px solid currentColor}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+
+/* ============================================================================
+   Brand chrome — header identity, badge, footer bridge, backup banners.
+   Added with the martivad.app visual merge; everything below uses the C1
+   tokens above, so a palette change carries through here too.
+   ========================================================================== */
+
+/* -- Header identity ---------------------------------------------------- */
+.logo .wmbox{display:flex;flex-direction:column;line-height:1.2;min-width:0}
+.logo .wm{font-family:var(--font-sans);font-weight:700;font-size:15px;letter-spacing:-.01em;color:var(--ink)}
+.logo .sub{font-size:11px;font-weight:500;color:var(--ink-2)}
+.badge-free{flex:none;align-self:center;padding:3px 9px;font-size:11px;font-weight:600;
+  color:var(--accent);border:1px solid var(--accent);
+  background:color-mix(in srgb,var(--accent) 10%,var(--card));white-space:nowrap}
+@media(max-width:560px){.logo .sub{display:none}}
+
+/* -- Footer ------------------------------------------------------------- */
+.sitefoot{border-top:1px solid var(--rule-2);background:var(--card);margin-top:var(--space-8)}
+.sitefoot .in{max-width:1400px;margin:0 auto;padding:var(--space-6) 18px var(--space-8);
+  display:flex;flex-direction:column;gap:var(--space-3)}
+.sitefoot .bridge{display:flex;gap:var(--space-2);flex-wrap:wrap;align-items:baseline;
+  padding-bottom:var(--space-3);border-bottom:1px solid var(--rule)}
+.sitefoot .bridge .q{margin:0;font-size:13px;font-weight:600;color:var(--ink)}
+.sitefoot .bridge .a{margin:0;font-size:13px;color:var(--ink-2)}
+.sitefoot .legal{margin:0;font-size:11.5px;color:var(--ink-2)}
+.sitefoot .legal.muted{color:var(--ink-3)}
+.sitefoot a{color:var(--accent);text-decoration:none;border-bottom:1px solid currentColor}
+.sitefoot a:hover{color:var(--accent);opacity:.85}
+
+/* -- Backup banners (assets/backup.js) ---------------------------------- */
+.bnr{display:flex;gap:var(--space-4);align-items:flex-start;flex-wrap:wrap;
+  margin-top:var(--space-4);padding:var(--space-3) var(--space-4);
+  border:1px solid var(--warn);background:var(--warn-soft);color:var(--ink)}
+.bnr.info{border-color:var(--rule-2);background:var(--card-2)}
+.bnr .txt{flex:1 1 320px;min-width:0;font-size:12.5px;line-height:1.55;margin:0}
+.bnr .txt b{font-weight:600}
+.bnr .acts{display:flex;gap:var(--space-2);align-items:center;flex:none}
+.bnr button.x{background:none;border:0;color:var(--ink-2);font-size:16px;line-height:1;padding:4px 6px}
+.bnr button.x:hover{color:var(--ink);background:none}
+
+/* -- Month-close success + bridge line ---------------------------------- */
+.msg .after{display:block;margin-top:6px;font-weight:400;color:var(--ink-2)}
+.msg .after a{color:var(--accent);text-decoration:none;border-bottom:1px solid currentColor}
+.msg .inline-act{margin-top:8px;display:flex;gap:var(--space-2);flex-wrap:wrap}

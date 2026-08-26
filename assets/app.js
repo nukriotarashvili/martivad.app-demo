@@ -1,3 +1,4 @@
+// © შპს მარტივადი — Elastic License 2.0 (იხ. LICENSE)
 /* ============================================================================
    app.js — ინტერფეისი. ჩანართები: ორგანიზაცია · გატარებები · ატვირთვა ·
             ცნობარები · უწყისი
@@ -5,6 +6,7 @@
 import SR from './sheetread.js';
 import { store, blankOrg, accMap, addEntry, ensurePartner, ensureItem, trialBalance } from './store.js';
 import { importBank, importSales, closeMonth } from './importers.js';
+import * as backup from './backup.js';
 
 /* ---------------------------------------------------------------- helpers */
 const $ = s => document.querySelector(s);
@@ -453,6 +455,59 @@ function datalists(org) {
   <datalist id="dl-i">${org.items.map(i => `<option value="${esc(i.code)}">${esc(i.name)}</option>`).join('')}</datalist>`;
 }
 
+/* ============================================================== BACKUP UI
+   მონაცემები localStorage-შია — cache-ის გაწმენდა მათ შლის. ბანერი ერთადერთი
+   ადგილია, სადაც ამას ვახსენებთ თავიდან; დანარჩენი მხოლოდ ექსპორტის შემდეგ
+   ჩუმდება. ლოგიკა backup.js-შია, აქ მხოლოდ ხატვაა.                          */
+
+/** გატარებების ჯამი ყველა ორგანიზაციაში — „ახალი გატარებების" სიგნალი. */
+const totalEntries = () => store.all().reduce((n, o) => n + (o.entries ? o.entries.length : 0), 0);
+
+/** ერთჯერადი შეტყობინება ხედის თავზე (თვის დახურვა და მისთანანი). */
+let flash = null;
+
+const MARTIVAD_URL = 'https://www.martivad.app/?utm_source=demo-app&utm_medium=bridge';
+const martivadLink = (content, label) =>
+  `<a href="${MARTIVAD_URL}&utm_content=${content}" target="_blank" rel="noopener">${label}</a>`;
+
+function bannerHtml() {
+  const parts = [];
+
+  if (flash) {
+    parts.push(`<div class="msg ${flash.cls}">${flash.html}</div>`);
+  }
+
+  const b = backup.bannerState(totalEntries());
+  if (b && b.kind === 'first') {
+    parts.push(`<div class="bnr info">
+      <p class="txt">მონაცემები ინახება <b>მხოლოდ ამ ბრაუზერში</b>. რეგულარულად გადმოწერეთ სარეზერვო
+        ასლი (ექსპორტი → JSON) — ბრაუზერის ისტორიის გაწმენდა მონაცემებს წაშლის.</p>
+      <span class="acts">
+        <button class="sm primary" data-act="bkexport">ექსპორტი</button>
+        <button class="x" data-act="bkdismiss" title="დახურვა" aria-label="დახურვა">✕</button>
+      </span></div>`);
+  } else if (b && b.kind === 'stale') {
+    const when = b.days === null || b.days === undefined
+      ? 'ჯერ არ გაგიკეთებიათ სარეზერვო ასლი'
+      : `ბოლო სარეზერვო ასლიდან ${b.days} დღე გავიდა`;
+    parts.push(`<div class="bnr">
+      <p class="txt"><b>${when}</b> — მას შემდეგ ${f0(b.added)} გატარება დაემატა. გადმოწერეთ ასლი,
+        სანამ ბრაუზერი მონაცემებს გაასუფთავებს.</p>
+      <span class="acts">
+        <button class="sm primary" data-act="bkexport">ექსპორტი</button>
+        <button class="x" data-act="bkdismiss" title="დახურვა" aria-label="დახურვა">✕</button>
+      </span></div>`);
+  }
+
+  return parts.join('');
+}
+
+/** სრული სარეზერვო ასლი + ათვლის განულება. */
+function doBackup() {
+  download('martivad-backup.json', store.export(), 'application/json');
+  backup.noteExport(totalEntries());
+}
+
 /* ================================================================ RENDER */
 function render() {
   const org = store.active();
@@ -464,6 +519,9 @@ function render() {
 
   $('#tabs').innerHTML = Object.entries(TABS).map(([k, v]) =>
     `<button role="tab" data-tab="${k}" aria-selected="${tab === k}" ${!org && k !== 'org' ? 'disabled' : ''}>${esc(v)}</button>`).join('');
+
+  const bnr = $('#banner');
+  if (bnr) bnr.innerHTML = bannerHtml();
 
   if (!org) { tab = 'org'; $('#view').innerHTML = vOrg(); return; }
   $('#view').innerHTML = tab === 'org' ? vOrg()
@@ -526,6 +584,8 @@ document.addEventListener('click', async ev => {
   const b = ev.target.closest('[data-act],[data-tab]');
   if (!b) return;
   const org = store.active();
+  // the flash is one-shot: any further interaction dismisses it
+  if (b.dataset.tab || (b.dataset.act && b.dataset.act !== 'bkexport')) flash = null;
   if (b.dataset.tab) { tab = b.dataset.tab; pending = tab === 'upload' ? pending : null; return render(); }
   const a = b.dataset.act;
 
@@ -546,7 +606,9 @@ document.addEventListener('click', async ev => {
       store.remove(b.dataset.id); setStatus('warn', 'წაიშალა'); return render();
     } return;
   }
-  if (a === 'expall') { download('martivad-backup.json', store.export(), 'application/json'); return; }
+  if (a === 'expall') { doBackup(); return render(); }
+  if (a === 'bkexport') { doBackup(); return render(); }
+  if (a === 'bkdismiss') { backup.snooze(); backup.markSeen(); flash = null; return render(); }
 
   if (!org) return;
 
@@ -673,8 +735,22 @@ function commit(org) {
     n++;
   }
   const label = pending.kind;
+  const wasMonthClose = /^თვითღირებულება/.test(label);
   pending = null; store.save();
   setStatus('ok', `${label}: დაემატა ${n} გატარება`);
+
+  if (wasMonthClose) {
+    // თვის დახურვა ბუნებრივი გაჩერების წერტილია — ერთადერთი ადგილი (footer-ის
+    // გარდა), სადაც Martivad-ზე ბმული ჩნდება. popup არ არის, ფუნქცია არ იბლოკება.
+    flash = { cls: 'ok', html:
+      `<b>${esc(label)}: დაემატა ${n} გატარება.</b> გირჩევთ ასლის გადმოწერას — თვის დახურვის შემდეგ
+       ეს საუკეთესო მომენტია.
+       <span class="after">მრავალმომხმარებლიანი მუშაობა და ავტომატური გატარებები POS-იდან —
+         ${martivadLink('month-close', 'Martivad.app-ში')}</span>
+       <div class="inline-act">
+         <button class="sm primary" data-act="bkexport">სარეზერვო ასლის გადმოწერა</button>
+       </div>` };
+  }
   render();
 }
 
@@ -686,5 +762,8 @@ function applyTpl(org, k) {
   draft.lines = (t.f ? t.f(org) : t.lines.map(l => ({ ...l })));
   render();
 }
+
+/* ტესტისთვის: martivadBackup.rewind(8) — ბოლო ექსპორტი 8 დღით უკან; .reset() — განულება */
+window.martivadBackup = backup;
 
 render();
