@@ -285,3 +285,11 @@ pre{background:var(--card-2);border:1px solid var(--rule);padding:12px;overflow:
 .msg .after{display:block;margin-top:6px;font-weight:400;color:var(--ink-2)}
 .msg .after a{color:var(--accent);text-decoration:none;border-bottom:1px solid currentColor}
 .msg .inline-act{margin-top:8px;display:flex;gap:var(--space-2);flex-wrap:wrap}
+
+/* -- Theme toggle -------------------------------------------------------- */
+.theme-toggle{flex:none;display:inline-flex;align-items:center;gap:6px;
+  min-height:34px;padding:5px 10px;font-size:12px;font-weight:600;
+  color:var(--ink-2);background:var(--card-2);border:1px solid var(--rule-2)}
+.theme-toggle:hover{color:var(--ink);background:var(--card-3)}
+.theme-toggle svg{flex:none}
+@media(max-width:560px){.theme-toggle .lbl{display:none}.theme-toggle{padding:5px 8px}}
