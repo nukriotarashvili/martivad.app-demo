@@ -8,6 +8,7 @@ import { store, blankOrg, accMap, addEntry, ensurePartner, ensureItem, trialBala
 import { importBank, importSales, closeMonth } from './importers.js';
 import * as backup from './backup.js';
 import { applyI18n, t as tr } from './i18n.js';
+import { initRates } from './ratesView.js';
 
 /* ---------------------------------------------------------------- helpers */
 const $ = s => document.querySelector(s);
@@ -122,6 +123,8 @@ function download(name, text, mime = 'text/plain') {
 function vOrg() {
   const orgs = store.all(), org = store.active();
   return `
+  <div id="ratesCard"></div>
+
   <div class="card">
     <h2 data-i18n="ორგანიზაციები">ორგანიზაციები</h2>
     <p class="note" data-i18n="ერთ ბრაუზერში რამდენიმე ორგანიზაციის წარმოება შეიძლება. მონაცემები ინახება მხოლოდ
@@ -527,7 +530,7 @@ function render() {
   if (bnr) bnr.innerHTML = bannerHtml();
   applyI18n(); // header, tab strip and banner are outside #view
 
-  if (!org) { tab = 'org'; $('#view').innerHTML = vOrg(); applyI18n(); return; }
+  if (!org) { tab = 'org'; $('#view').innerHTML = vOrg(); applyI18n(); initRates(); return; }
   $('#view').innerHTML = tab === 'org' ? vOrg()
     : tab === 'journal' ? vJournal(org)
     : tab === 'upload' ? vUpload(org)
@@ -537,6 +540,9 @@ function render() {
   // The views are rebuilt from template strings on every render, so the
   // translation has to be re-applied to the fresh nodes each time.
   applyI18n();
+
+  // The rates card owns its own async state; render() only gives it a home.
+  if (tab === 'org') initRates();
 }
 
 /* ================================================================ EVENTS */
